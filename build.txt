@@ -1,0 +1,6 @@
+author = hamstar
+version = 1.4.5.1
+displayName = Lives
+buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*
+includePDB = false
+homepage = http://forums.terraria.org/index.php?threads/lives-injury.52287/

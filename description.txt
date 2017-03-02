@@ -1,0 +1,3 @@
+Adds lives.  Works only for softcore or mediumcore players.
+- Craftable 1-Ups (Life Fruit/Crystal + Guide Voodoo Doll + 15 Gold Coins)
+- Config file in Documents/My Games/Terraria/ModLoader/
