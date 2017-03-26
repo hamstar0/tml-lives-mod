@@ -41,8 +41,10 @@ namespace Lives {
 
 		public override void OnEnterWorld( Player player ) {
 			if( player.whoAmI == this.player.whoAmI ) { // Current player
-				if( !LivesMod.Config.Load() ) {
-					LivesMod.Config.Save();
+				if( Main.netMode != 2 ) { // Not server
+					if( !LivesMod.Config.Load() ) {
+						LivesMod.Config.Save();
+					}
 				}
 
 				if( Main.netMode == 1 ) { // Client
