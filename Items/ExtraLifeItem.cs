@@ -16,7 +16,7 @@ namespace Lives.Items {
 			this.item.useTime = 30;
 			this.item.useAnimation = 30;
 			this.item.UseSound = SoundID.Item4;
-			this.item.toolTip = "Extra life! Except for hardcore folk.";
+			this.item.toolTip = "Extra life (except for hardcore folk)";
 			this.item.value = 10000;
 			this.item.rare = 4;
 		}

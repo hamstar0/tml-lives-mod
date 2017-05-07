@@ -20,7 +20,7 @@ namespace Lives {
 
 
 	public class LivesMod : Mod {
-		public static readonly Version ConfigVersion = new Version( 1, 5, 0 );
+		public static readonly Version ConfigVersion = new Version( 1, 5, 1 );
 		public JsonConfig<ConfigurationData> Config { get; private set; }
 
 
@@ -31,12 +31,12 @@ namespace Lives {
 				AutoloadSounds = true
 			};
 
-			string filename = "Lives "+LivesMod.ConfigVersion.ToString()+".json";
+			string filename = "Lives Config.json";
 			this.Config = new JsonConfig<ConfigurationData>( filename, "Mod Configs", new ConfigurationData() );
 		}
 
 		public override void Load() {
-			var old_config = new JsonConfig<ConfigurationData>( this.Config.FileName, "", new ConfigurationData() );
+			var old_config = new JsonConfig<ConfigurationData>( "Lives 1.2.0.json", "", new ConfigurationData() );
 			// Update old config to new location
 			if( old_config.LoadFile() ) {
 				old_config.DestroyFile();
