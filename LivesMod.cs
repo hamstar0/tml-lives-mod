@@ -20,8 +20,8 @@ namespace Lives {
 
 
 	public class LivesMod : Mod {
-		public static readonly Version ConfigVersion = new Version( 1, 2, 0 );
-		public static JsonConfig<ConfigurationData> Config { get; private set; }
+		public static readonly Version ConfigVersion = new Version( 1, 5, 0 );
+		public JsonConfig<ConfigurationData> Config { get; private set; }
 
 
 		public LivesMod() {
@@ -32,22 +32,29 @@ namespace Lives {
 			};
 
 			string filename = "Lives "+LivesMod.ConfigVersion.ToString()+".json";
-			LivesMod.Config = new JsonConfig<ConfigurationData>(filename, new ConfigurationData());
+			this.Config = new JsonConfig<ConfigurationData>( filename, "Mod Configs", new ConfigurationData() );
 		}
 
 		public override void Load() {
-			if( !LivesMod.Config.Load() ) {
-				LivesMod.Config.Save();
-			} else {
-				Version vers_since = LivesMod.Config.Data.VersionSinceUpdate != "" ?
-					new Version( LivesMod.Config.Data.VersionSinceUpdate ) :
-					new Version();
+			var old_config = new JsonConfig<ConfigurationData>( this.Config.FileName, "", new ConfigurationData() );
+			// Update old config to new location
+			if( old_config.LoadFile() ) {
+				old_config.DestroyFile();
+				old_config.SetFilePath( this.Config.FileName, "Mod Configs" );
+				this.Config = old_config;
+			} else if( !this.Config.LoadFile() ) {
+				this.Config.SaveFile();
+			}
+			
+			Version vers_since = this.Config.Data.VersionSinceUpdate != "" ?
+				new Version( this.Config.Data.VersionSinceUpdate ) :
+				new Version();
 
-				if( vers_since < LivesMod.ConfigVersion ) {
-					ErrorLogger.Log( "Lives config updated to " + LivesMod.ConfigVersion.ToString() );
-					LivesMod.Config.Data.VersionSinceUpdate = LivesMod.ConfigVersion.ToString();
-					LivesMod.Config.Save();
-				}
+			if( vers_since < LivesMod.ConfigVersion ) {
+				ErrorLogger.Log( "Lives config updated to " + LivesMod.ConfigVersion.ToString() );
+
+				this.Config.Data.VersionSinceUpdate = LivesMod.ConfigVersion.ToString();
+				this.Config.SaveFile();
 			}
 		}
 

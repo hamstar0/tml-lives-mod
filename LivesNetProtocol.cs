@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ModLoader;
 
+
 namespace Lives {
 	public enum LivesNetProtocolTypes : byte {
 		SendSettingsRequest,
@@ -11,18 +12,18 @@ namespace Lives {
 
 
 	public class LivesNetProtocol {
-		public static void RoutePacket( Mod mod, BinaryReader reader ) {
+		public static void RoutePacket( LivesMod mymod, BinaryReader reader ) {
 			LivesNetProtocolTypes protocol = (LivesNetProtocolTypes)reader.ReadByte();
 
 			switch( protocol ) {
 			case LivesNetProtocolTypes.SendSettingsRequest:
-				LivesNetProtocol.ReceiveSettingsRequestWithServer( mod, reader );
+				LivesNetProtocol.ReceiveSettingsRequestWithServer( mymod, reader );
 				break;
 			case LivesNetProtocolTypes.SendSettings:
-				LivesNetProtocol.ReceiveSettingsWithClient( mod, reader );
+				LivesNetProtocol.ReceiveSettingsWithClient( mymod, reader );
 				break;
 			case LivesNetProtocolTypes.SignalDifficultyChange:
-				LivesNetProtocol.ReceiveDifficultyChangeSignalWithServer( mod, reader );
+				LivesNetProtocol.ReceiveDifficultyChangeSignalWithServer( mymod, reader );
 				break;
 			default:
 				ErrorLogger.Log( "Invalid packet protocol: " + protocol );
@@ -36,20 +37,20 @@ namespace Lives {
 		// Senders (client)
 		////////////////////////////////
 
-		public static void RequestSettingsWithClient( Mod mod, Player player ) {
+		public static void RequestSettingsWithClient( LivesMod mymod, Player player ) {
 			if( Main.netMode != 1 ) { return; } // Clients only
 
-			ModPacket packet = mod.GetPacket();
+			ModPacket packet = mymod.GetPacket();
 
 			packet.Write( (byte)LivesNetProtocolTypes.SendSettingsRequest );
 			packet.Write( (int)player.whoAmI );
 			packet.Send();
 		}
 
-		public static void SignalDifficultyChangeFromClient( Mod mod, Player player, byte difficulty ) {
+		public static void SignalDifficultyChangeFromClient( LivesMod mymod, Player player, byte difficulty ) {
 			if( Main.netMode != 1 ) { return; } // Clients only
 
-			ModPacket packet = mod.GetPacket();
+			ModPacket packet = mymod.GetPacket();
 
 			packet.Write( (byte)LivesNetProtocolTypes.SignalDifficultyChange );
 			packet.Write( (int)player.whoAmI );
@@ -61,17 +62,13 @@ namespace Lives {
 		// Senders (server)
 		////////////////////////////////
 
-		public static void SendSettingsFromServer( Mod mod, Player player ) {
+		public static void SendSettingsFromServer( LivesMod mymod, Player player ) {
 			if( Main.netMode != 2 ) { return; } // Server only
 
-			ModPacket packet = mod.GetPacket();
+			ModPacket packet = mymod.GetPacket();
 
 			packet.Write( (byte)LivesNetProtocolTypes.SendSettings );
-			packet.Write( (int)LivesMod.Config.Data.InitialLives );
-			packet.Write( (int)LivesMod.Config.Data.MaxLives );
-			packet.Write( (bool)LivesMod.Config.Data.CraftableExtraLives );
-			packet.Write( (int)LivesMod.Config.Data.ExtraLifeGoldCoins );
-			packet.Write( (bool)LivesMod.Config.Data.ExtraLifeVoodoo );
+			packet.Write( (string)mymod.Config.SerializeMe() );
 
 			packet.Send( (int)player.whoAmI );
 		}
@@ -82,16 +79,12 @@ namespace Lives {
 		// Recipients (client)
 		////////////////////////////////
 
-		private static void ReceiveSettingsWithClient( Mod mod, BinaryReader reader ) {
+		private static void ReceiveSettingsWithClient( LivesMod mymod, BinaryReader reader ) {
 			if( Main.netMode != 1 ) { return; } // Clients only
 
-			LivesMod.Config.Data.InitialLives = (int)reader.ReadInt32();
-			LivesMod.Config.Data.MaxLives = (int)reader.ReadInt32();
-			LivesMod.Config.Data.CraftableExtraLives = (bool)reader.ReadBoolean();
-			LivesMod.Config.Data.ExtraLifeGoldCoins = (int)reader.ReadInt32();
-			LivesMod.Config.Data.ExtraLifeVoodoo = (bool)reader.ReadBoolean();
+			mymod.Config.DeserializeMe( reader.ReadString() );
 
-			var modplayer = Main.player[Main.myPlayer].GetModPlayer<LivesPlayer>( mod );
+			var modplayer = Main.player[Main.myPlayer].GetModPlayer<LivesPlayer>( mymod );
 			modplayer.UpdateMortality();
 		}
 
@@ -99,7 +92,7 @@ namespace Lives {
 		// Recipients (server)
 		////////////////////////////////
 
-		private static void ReceiveSettingsRequestWithServer( Mod mod, BinaryReader reader ) {
+		private static void ReceiveSettingsRequestWithServer( LivesMod mymod, BinaryReader reader ) {
 			if( Main.netMode != 2 ) { return; } // Server only
 
 			int who = reader.ReadInt32();
@@ -109,10 +102,10 @@ namespace Lives {
 				return;
 			}
 
-			LivesNetProtocol.SendSettingsFromServer( mod, Main.player[who] );
+			LivesNetProtocol.SendSettingsFromServer( mymod, Main.player[who] );
 		}
 
-		private static void ReceiveDifficultyChangeSignalWithServer( Mod mod, BinaryReader reader ) {
+		private static void ReceiveDifficultyChangeSignalWithServer( LivesMod mymod, BinaryReader reader ) {
 			if( Main.netMode != 2 ) { return; } // Clients only
 
 			int who = reader.ReadInt32();

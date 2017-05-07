@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -19,7 +20,15 @@ namespace Lives.Items {
 			this.item.value = 10000;
 			this.item.rare = 4;
 		}
-		
+
+		public override void Update( ref float gravity, ref float max_fall_speed ) {
+			if( Main.rand.Next( 6 ) == 0 ) {
+				int who = Dust.NewDust( this.item.position, this.item.width, this.item.height, 55, 0f, 0f, 200, Color.Gold, 1f );
+				Main.dust[who].velocity *= 0.3f;
+				Main.dust[who].scale *= 0.5f;
+			}
+		}
+
 		public override bool UseItem( Player player ) {
 			if( player.itemAnimation > 0 && player.itemTime == 0 ) {
 				player.itemTime = item.useTime;
@@ -34,11 +43,13 @@ namespace Lives.Items {
 		}
 
 		public override void AddRecipes() {
-			var recipe1 = new ExtraLifeRecipe( this.mod, "Life Crystal", 1 );
+			var mymod = (LivesMod)this.mod;
+
+			var recipe1 = new ExtraLifeRecipe( mymod, "Life Crystal", 1 );
 			recipe1.SetResult( this );
 			recipe1.AddRecipe();
 
-			var recipe2 = new ExtraLifeRecipe( this.mod, "Life Fruit", 4 );
+			var recipe2 = new ExtraLifeRecipe( mymod, "Life Fruit", 4 );
 			recipe2.SetResult( this );
 			recipe2.AddRecipe();
 		}
@@ -47,12 +58,12 @@ namespace Lives.Items {
 
 
 	class ExtraLifeRecipe : ModRecipe {
-		public ExtraLifeRecipe( Mod mod, string base_ingredient, int base_quantity ) : base( mod ) {
-			int coins = LivesMod.Config.Data.ExtraLifeGoldCoins;
+		public ExtraLifeRecipe( LivesMod mymod, string base_ingredient, int base_quantity ) : base( mymod ) {
+			int coins = mymod.Config.Data.ExtraLifeGoldCoins;
 
 			this.AddIngredient( base_ingredient, base_quantity );
 
-			if( LivesMod.Config.Data.ExtraLifeVoodoo ) {
+			if( mymod.Config.Data.ExtraLifeVoodoo ) {
 				this.AddIngredient( "Guide Voodoo Doll", 1 );
 			}
 			if( coins > 0 ) {
@@ -61,7 +72,8 @@ namespace Lives.Items {
 		}
 
 		public override bool RecipeAvailable() {
-			return LivesMod.Config.Data.CraftableExtraLives;
+			var mymod = (LivesMod)this.mod;
+			return mymod.Config.Data.CraftableExtraLives;
 		}
 	}
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
@@ -13,19 +12,16 @@ namespace Lives {
 		public byte OriginalDifficulty { get; private set; }
 		public bool IsMortal { get; private set; }
 
-		private bool IsInitialized = false;
-
 
 		////////////////
 
 		public override void Initialize() {
-			if( !this.IsInitialized ) {
-				this.IsInitialized = true;
+			var mymod = (LivesMod)this.mod;
 
-				this.Lives = LivesMod.Config.Data.InitialLives;
-				this.Deaths = 0;
-				this.OriginalDifficulty = this.player.difficulty;
-			}
+			this.Lives = mymod.Config.Data.InitialLives;
+			this.Deaths = 0;
+			this.OriginalDifficulty = this.player.difficulty;
+			this.IsMortal = true;
 		}
 
 		public override void clientClone( ModPlayer clone ) {
@@ -36,19 +32,20 @@ namespace Lives {
 			myclone.Lives = this.Lives;
 			myclone.Deaths = this.Deaths;
 			myclone.OriginalDifficulty = this.OriginalDifficulty;
-			myclone.IsInitialized = this.IsInitialized;
 		}
 
 		public override void OnEnterWorld( Player player ) {
+			var mymod = (LivesMod)this.mod;
+
 			if( player.whoAmI == this.player.whoAmI ) { // Current player
 				if( Main.netMode != 2 ) { // Not server
-					if( !LivesMod.Config.Load() ) {
-						LivesMod.Config.Save();
+					if( !mymod.Config.LoadFile() ) {
+						mymod.Config.SaveFile();
 					}
 				}
 
 				if( Main.netMode == 1 ) { // Client
-					LivesNetProtocol.RequestSettingsWithClient( this.mod, player );
+					LivesNetProtocol.RequestSettingsWithClient( mymod, player );
 				} else {
 					this.UpdateMortality();
 				}
@@ -56,39 +53,16 @@ namespace Lives {
 		}
 
 		////////////////
-
-		public override void LoadLegacy( BinaryReader reader ) {
-			this.Lives = reader.ReadInt32();
-			this.IsMortal = reader.ReadBoolean();
-			if( reader.PeekChar() != -1 ) {
-				this.Deaths = reader.ReadInt32();
-			}
-			
-			// Detect true 'Difficulty' based on available information
-			if( this.Deaths > 0 && this.Lives == 0 && this.player.difficulty == 2 ) {
-				this.OriginalDifficulty = 0;    // Set softcore
-			}
-
-			this.UpdateMortality();
-		}
-
+		
 		public override void Load( TagCompound tags ) {
 			try {
-				this.IsMortal = tags.GetBool( "is_mortal" );
-				if( this.IsMortal ) {
+				if( tags.ContainsKey("lives") ) {
+					this.IsMortal = tags.GetBool( "is_mortal" );
 					this.Lives = tags.GetInt( "lives" );
 					this.Deaths = tags.GetInt( "lives_lost" );
 					this.OriginalDifficulty = tags.GetByte( "difficulty" );
-				} else {    // Preserve initialized values, if invalid load data
-					this.IsMortal = true;
-					// If settings from previous versions exist, accommodate them
-					if( this.Deaths > 0 && this.Lives == 0 && this.player.difficulty == 2 ) {
-						this.OriginalDifficulty = 0;
-					} else {
-						this.OriginalDifficulty = this.player.difficulty;
-					}
 				}
-
+				
 				this.UpdateMortality();
 			} catch( Exception e ) {
 				ErrorLogger.Log( e.ToString() );
@@ -107,30 +81,35 @@ namespace Lives {
 
 		////////////////
 
-		public override bool PreKill( double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource ) {
+		public override bool PreKill( double damage, int hit_direction, bool pvp, ref bool play_sound, ref bool gen_gore, ref PlayerDeathReason damage_source ) {
 			this.Deaths++;
-			this.UpdateMortality();
-			
-			if( this.IsMortal && this.Lives > 0 ) {
+			if( this.IsMortal ) {
 				this.Lives -= 1;
 			}
 
-			return base.PreKill(damage, hitDirection, pvp, ref playSound, ref genGore, ref damageSource);
+			this.UpdateMortality();
+
+			return base.PreKill( damage, hit_direction, pvp, ref play_sound, ref gen_gore, ref damage_source );
 		}
 
 
 		////////////////
 
 		public bool AddLives( int lives ) {
+			var mymod = (LivesMod)this.mod;
+
+			if( !this.IsMortal ) { return false; }
+
 			if( lives <= 0 ) {
 				ErrorLogger.Log( "Invalid lives quantity." );
 				return false;
 			}
-			if( (this.Lives + lives) > LivesMod.Config.Data.MaxLives ) {
+			if( (this.Lives + lives) > mymod.Config.Data.MaxLives ) {
 				return false;
 			}
 
 			this.Lives += lives;
+
 			this.UpdateMortality();
 
 			return true;
@@ -140,17 +119,19 @@ namespace Lives {
 		////////////////
 
 		public void UpdateMortality() {
-			if( this.Lives > LivesMod.Config.Data.MaxLives ) {
-				this.Lives = LivesMod.Config.Data.MaxLives;
-			}
+			var mymod = (LivesMod)this.mod;
 
+			if( this.Lives > mymod.Config.Data.MaxLives ) {
+				this.Lives = mymod.Config.Data.MaxLives;
+			}
+			
 			if( this.player.difficulty != 2 ) { // Not hardcore
 				if( this.IsMortal ) {
-					if( this.Lives == 0 ) {
+					if( this.Lives <= 0 ) {
 						this.player.difficulty = 2;  // Set hardcore
 
 						if( Main.netMode == 1 ) {   // Client
-							LivesNetProtocol.SignalDifficultyChangeFromClient( this.mod, this.player, 2 );
+							LivesNetProtocol.SignalDifficultyChangeFromClient( mymod, this.player, 2 );
 						}
 					}
 				}
@@ -158,8 +139,8 @@ namespace Lives {
 				if( this.Lives > 0 && this.OriginalDifficulty != 2 ) {
 					this.player.difficulty = this.OriginalDifficulty;
 
-					if( Main.netMode == 1 ) {   // Client
-						LivesNetProtocol.SignalDifficultyChangeFromClient( this.mod, this.player, this.OriginalDifficulty );
+					if( Main.netMode == 1 ) {	// Client
+						LivesNetProtocol.SignalDifficultyChangeFromClient( mymod, this.player, this.OriginalDifficulty );
 					}
 				}
 			}
