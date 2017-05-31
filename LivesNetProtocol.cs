@@ -11,7 +11,7 @@ namespace Lives {
 	}
 
 
-	public class LivesNetProtocol {
+	public static class LivesNetProtocol {
 		public static void RoutePacket( LivesMod mymod, BinaryReader reader ) {
 			LivesNetProtocolTypes protocol = (LivesNetProtocolTypes)reader.ReadByte();
 

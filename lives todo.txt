@@ -1,10 +1,16 @@
-v1.5
--	Use `player.KillMeForGood()`
+Future
 -	Add config option to set the corner to show lives
+-	Set lives display to layer the same as health and mana
+
+
+
+v1.5
 -	Adjust text position to fit double or triple digits
--	Fix last life locking in hardcore mode
+-	Allow crafting lives from Clothier Voodoo Dolls
+-	Allow Souls of Flight as crafting substitute for 1-Ups
 
 v1.4
+-	Fix last life locking in hardcore mode
 -	Add option for 'hard' 1-Up crafting recipe (15 gold coins needed)
 v1
 -	Add animation for max hp loss

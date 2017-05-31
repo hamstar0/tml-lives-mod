@@ -99,11 +99,7 @@ namespace Lives {
 			var mymod = (LivesMod)this.mod;
 
 			if( !this.IsMortal ) { return false; }
-
-			if( lives <= 0 ) {
-				ErrorLogger.Log( "Invalid lives quantity." );
-				return false;
-			}
+			
 			if( (this.Lives + lives) > mymod.Config.Data.MaxLives ) {
 				return false;
 			}
