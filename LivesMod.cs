@@ -11,8 +11,12 @@ using Utils.JsonConfig;
 namespace Lives {
 	public class ConfigurationData {
 		public string VersionSinceUpdate = "";
+
+		public bool Enabled = true;
+
 		public int InitialLives = 3;
 		public int MaxLives = 99;
+
 		public bool CraftableExtraLives = true;
 		public int ExtraLifeGoldCoins = 15;
 		public bool ExtraLifeVoodoo = true;
@@ -20,7 +24,7 @@ namespace Lives {
 
 
 	public class LivesMod : Mod {
-		public static readonly Version ConfigVersion = new Version( 1, 5, 1 );
+		public static readonly Version ConfigVersion = new Version( 1, 5, 2 );
 		public JsonConfig<ConfigurationData> Config { get; private set; }
 
 
@@ -44,17 +48,17 @@ namespace Lives {
 				this.Config = old_config;
 			} else if( !this.Config.LoadFile() ) {
 				this.Config.SaveFile();
-			}
-			
-			Version vers_since = this.Config.Data.VersionSinceUpdate != "" ?
-				new Version( this.Config.Data.VersionSinceUpdate ) :
-				new Version();
+			} else {
+				Version vers_since = this.Config.Data.VersionSinceUpdate != "" ?
+					new Version( this.Config.Data.VersionSinceUpdate ) :
+					new Version();
 
-			if( vers_since < LivesMod.ConfigVersion ) {
-				ErrorLogger.Log( "Lives config updated to " + LivesMod.ConfigVersion.ToString() );
+				if( vers_since < LivesMod.ConfigVersion ) {
+					ErrorLogger.Log( "Lives config updated to " + LivesMod.ConfigVersion.ToString() );
 
-				this.Config.Data.VersionSinceUpdate = LivesMod.ConfigVersion.ToString();
-				this.Config.SaveFile();
+					this.Config.Data.VersionSinceUpdate = LivesMod.ConfigVersion.ToString();
+					this.Config.SaveFile();
+				}
 			}
 		}
 
@@ -69,6 +73,8 @@ namespace Lives {
 		////////////////
 
 		public override void PostDrawInterface( SpriteBatch sb ) {
+			if( !this.Config.Data.Enabled ) { return; }
+
 			Player player = Main.player[Main.myPlayer];
 			if( player.difficulty == 2 ) { return; }
 			

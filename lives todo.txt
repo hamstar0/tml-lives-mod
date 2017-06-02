@@ -4,10 +4,11 @@ Future
 
 
 
-v1.5
+v1.6
 -	Adjust text position to fit double or triple digits
 -	Allow crafting lives from Clothier Voodoo Dolls
 -	Allow Souls of Flight as crafting substitute for 1-Ups
+-	Add setting to require player to exist in the underworld when lives gone
 
 v1.4
 -	Fix last life locking in hardcore mode
