@@ -24,7 +24,7 @@ namespace Lives {
 
 
 	public class LivesMod : Mod {
-		public static readonly Version ConfigVersion = new Version( 1, 5, 2 );
+		public static readonly Version ConfigVersion = new Version( 1, 5, 3 );
 		public JsonConfig<ConfigurationData> Config { get; private set; }
 
 
@@ -78,8 +78,8 @@ namespace Lives {
 			Player player = Main.player[Main.myPlayer];
 			if( player.difficulty == 2 ) { return; }
 			
-			LivesPlayer info = player.GetModPlayer<LivesPlayer>(this);
-			int lives = info.Lives;
+			var modplayer = player.GetModPlayer<LivesPlayer>(this);
+			int lives = modplayer.Lives;
 			Vector2 pos = new Vector2(Main.screenWidth - 38, Main.screenHeight - 26);
 
 			PlayerHead.DrawPlayerHead(sb, Main.player[Main.myPlayer], Main.screenWidth - 48, Main.screenHeight - 24, 1f, 1f);

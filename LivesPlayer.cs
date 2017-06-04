@@ -10,7 +10,7 @@ namespace Lives {
 		public int Lives { get; private set; }
 		public int Deaths { get; private set; }
 		public byte OriginalDifficulty { get; private set; }
-		public bool IsMortal { get; private set; }
+		public bool IsImmortal { get; private set; }
 
 
 		////////////////
@@ -21,18 +21,19 @@ namespace Lives {
 			this.Lives = mymod.Config.Data.InitialLives;
 			this.Deaths = 0;
 			this.OriginalDifficulty = this.player.difficulty;
-			this.IsMortal = true;
+			this.IsImmortal = false;
 		}
 
 		public override void clientClone( ModPlayer clone ) {
 			base.clientClone( clone );
 			var myclone = (LivesPlayer)clone;
 			
-			myclone.IsMortal = this.IsMortal;
+			myclone.IsImmortal = this.IsImmortal;
 			myclone.Lives = this.Lives;
 			myclone.Deaths = this.Deaths;
 			myclone.OriginalDifficulty = this.OriginalDifficulty;
 		}
+
 
 		public override void OnEnterWorld( Player player ) {
 			var mymod = (LivesMod)this.mod;
@@ -57,7 +58,7 @@ namespace Lives {
 		public override void Load( TagCompound tags ) {
 			try {
 				if( tags.ContainsKey("lives") ) {
-					this.IsMortal = tags.GetBool( "is_mortal" );
+					this.IsImmortal = tags.GetBool( "is_immortal" );
 					this.Lives = tags.GetInt( "lives" );
 					this.Deaths = tags.GetInt( "lives_lost" );
 					this.OriginalDifficulty = tags.GetByte( "difficulty" );
@@ -71,7 +72,7 @@ namespace Lives {
 
 		public override TagCompound Save() {
 			var tags = new TagCompound {
-				{"is_mortal", this.IsMortal},
+				{"is_immortal", this.IsImmortal},
 				{"lives", this.Lives},
 				{"lives_lost", this.Deaths},
 				{"difficulty", this.OriginalDifficulty}
@@ -86,7 +87,7 @@ namespace Lives {
 			if( !mymod.Config.Data.Enabled ) { base.PreKill( damage, hit_direction, pvp, ref play_sound, ref gen_gore, ref damage_source ); }
 
 			this.Deaths++;
-			if( this.IsMortal ) {
+			if( !this.IsImmortal ) {
 				this.Lives -= 1;
 			}
 
@@ -101,16 +102,16 @@ namespace Lives {
 		public bool AddLives( int lives ) {
 			var mymod = (LivesMod)this.mod;
 
-			if( !this.IsMortal ) { return false; }
-			
 			if( (this.Lives + lives) > mymod.Config.Data.MaxLives ) {
-				return false;
+				lives = mymod.Config.Data.MaxLives - this.Lives;
+			} else if( (this.Lives + lives) < 0 ) {
+				lives = -this.Lives;
 			}
 
 			this.Lives += lives;
 
 			this.UpdateMortality();
-
+			
 			return true;
 		}
 
@@ -125,7 +126,7 @@ namespace Lives {
 			}
 			
 			if( this.player.difficulty != 2 ) { // Not hardcore
-				if( this.IsMortal ) {
+				if( !this.IsImmortal ) {
 					if( this.Lives <= 0 ) {
 						this.player.difficulty = 2;  // Set hardcore
 

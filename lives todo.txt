@@ -10,6 +10,8 @@ v1.6
 -	Allow Souls of Flight as crafting substitute for 1-Ups
 -	Add setting to require player to exist in the underworld when lives gone
 
+v1.5.2
+-	Add 'Enabled' config setting
 v1.4
 -	Fix last life locking in hardcore mode
 -	Add option for 'hard' 1-Up crafting recipe (15 gold coins needed)
