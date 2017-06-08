@@ -5,8 +5,8 @@ using Terraria.ModLoader;
 
 namespace Lives {
 	public enum LivesNetProtocolTypes : byte {
-		SendSettingsRequest,
-		SendSettings,
+		RequestModSettings,
+		ModSettings,
 		SignalDifficultyChange
 	}
 
@@ -16,10 +16,10 @@ namespace Lives {
 			LivesNetProtocolTypes protocol = (LivesNetProtocolTypes)reader.ReadByte();
 
 			switch( protocol ) {
-			case LivesNetProtocolTypes.SendSettingsRequest:
+			case LivesNetProtocolTypes.RequestModSettings:
 				LivesNetProtocol.ReceiveSettingsRequestWithServer( mymod, reader );
 				break;
-			case LivesNetProtocolTypes.SendSettings:
+			case LivesNetProtocolTypes.ModSettings:
 				LivesNetProtocol.ReceiveSettingsWithClient( mymod, reader );
 				break;
 			case LivesNetProtocolTypes.SignalDifficultyChange:
@@ -42,7 +42,7 @@ namespace Lives {
 
 			ModPacket packet = mymod.GetPacket();
 
-			packet.Write( (byte)LivesNetProtocolTypes.SendSettingsRequest );
+			packet.Write( (byte)LivesNetProtocolTypes.RequestModSettings );
 			packet.Write( (int)player.whoAmI );
 			packet.Send();
 		}
@@ -67,7 +67,7 @@ namespace Lives {
 
 			ModPacket packet = mymod.GetPacket();
 
-			packet.Write( (byte)LivesNetProtocolTypes.SendSettings );
+			packet.Write( (byte)LivesNetProtocolTypes.ModSettings );
 			packet.Write( (string)mymod.Config.SerializeMe() );
 
 			packet.Send( (int)player.whoAmI );

@@ -6,8 +6,13 @@ using Terraria.ModLoader;
 
 namespace Lives.Items {
 	public class ExtraLifeItem : ModItem {
+		public override void SetStaticDefaults() {
+			this.DisplayName.SetDefault( "1-Up" );
+			this.Tooltip.SetDefault( "Extra life (except for hardcore folk)" );
+		}
+
+
 		public override void SetDefaults() {
-			this.item.name = "1-Up";
 			this.item.maxStack = 99;
 			this.item.consumable = true;
 			this.item.width = 18;
@@ -16,7 +21,6 @@ namespace Lives.Items {
 			this.item.useTime = 30;
 			this.item.useAnimation = 30;
 			this.item.UseSound = SoundID.Item4;
-			this.item.toolTip = "Extra life (except for hardcore folk)";
 			this.item.value = 10000;
 			this.item.rare = 4;
 		}
@@ -44,8 +48,8 @@ namespace Lives.Items {
 
 		public override void AddRecipes() {
 			var mymod = (LivesMod)this.mod;
-			var recipe1 = new ExtraLifeRecipe( mymod, this, "Life Crystal", 1 );
-			var recipe2 = new ExtraLifeRecipe( mymod, this, "Life Fruit", 4 );
+			var recipe1 = new ExtraLifeRecipe( mymod, this, ItemID.LifeCrystal, 1 );
+			var recipe2 = new ExtraLifeRecipe( mymod, this, ItemID.LifeFruit, 4 );
 
 			recipe1.AddRecipe();
 			recipe2.AddRecipe();
@@ -55,16 +59,16 @@ namespace Lives.Items {
 
 
 	class ExtraLifeRecipe : ModRecipe {
-		public ExtraLifeRecipe( LivesMod mymod, ExtraLifeItem myitem, string base_ingredient, int base_quantity ) : base( mymod ) {
+		public ExtraLifeRecipe( LivesMod mymod, ExtraLifeItem myitem, int item_id, int base_quantity ) : base( mymod ) {
 			int coins = mymod.Config.Data.ExtraLifeGoldCoins;
 
-			this.AddIngredient( base_ingredient, base_quantity );
+			this.AddIngredient( item_id, base_quantity );
 
 			if( mymod.Config.Data.ExtraLifeVoodoo ) {
-				this.AddIngredient( "Guide Voodoo Doll", 1 );
+				this.AddIngredient( ItemID.GuideVoodooDoll, 1 );
 			}
 			if( coins > 0 ) {
-				this.AddIngredient( "Gold Coin", coins );
+				this.AddIngredient( ItemID.GoldCoin, coins );
 			}
 			this.SetResult( myitem );
 		}

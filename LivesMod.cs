@@ -1,11 +1,12 @@
-﻿using Microsoft.Xna.Framework;
+﻿using HamstarHelpers.PlayerHelpers;
+using HamstarHelpers.Utilities.Config;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Graphics;
 using System;
 using System.IO;
 using Terraria;
 using Terraria.ModLoader;
-using Utils;
-using Utils.JsonConfig;
 
 
 namespace Lives {
@@ -24,7 +25,7 @@ namespace Lives {
 
 
 	public class LivesMod : Mod {
-		public static readonly Version ConfigVersion = new Version( 1, 5, 3 );
+		public static readonly Version ConfigVersion = new Version( 1, 5, 4 );
 		public JsonConfig<ConfigurationData> Config { get; private set; }
 
 
@@ -82,10 +83,8 @@ namespace Lives {
 			int lives = modplayer.Lives;
 			Vector2 pos = new Vector2(Main.screenWidth - 38, Main.screenHeight - 26);
 
-			PlayerHead.DrawPlayerHead(sb, Main.player[Main.myPlayer], Main.screenWidth - 48, Main.screenHeight - 24, 1f, 1f);
-			sb.DrawString(Main.fontMouseText, " x" + lives, pos, Color.White);
-
-			DebugHelper.PrintToBatch( sb );
+			PlayerHeadHelpers.DrawPlayerHead(sb, Main.player[Main.myPlayer], Main.screenWidth - 48, Main.screenHeight - 24, 1f, 1f);
+			sb.DrawString( Main.fontMouseText, " x" + lives, pos, Color.White );
 		}
 	}
 }
