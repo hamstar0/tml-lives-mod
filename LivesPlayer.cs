@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lives.NetProtocol;
+using System;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
@@ -46,7 +47,7 @@ namespace Lives {
 				}
 
 				if( Main.netMode == 1 ) { // Client
-					LivesNetProtocol.RequestSettingsWithClient( mymod, player );
+					ClientPacketHandlers.RequestSettingsWithClient( mymod, player );
 				} else {
 					this.UpdateMortality();
 				}
@@ -131,7 +132,7 @@ namespace Lives {
 						this.player.difficulty = 2;  // Set hardcore
 
 						if( Main.netMode == 1 ) {   // Client
-							LivesNetProtocol.SignalDifficultyChangeFromClient( mymod, this.player, 2 );
+							ClientPacketHandlers.SignalDifficultyChangeFromClient( mymod, this.player, 2 );
 						}
 					}
 				}
@@ -140,7 +141,7 @@ namespace Lives {
 					this.player.difficulty = this.OriginalDifficulty;
 
 					if( Main.netMode == 1 ) {	// Client
-						LivesNetProtocol.SignalDifficultyChangeFromClient( mymod, this.player, this.OriginalDifficulty );
+						ClientPacketHandlers.SignalDifficultyChangeFromClient( mymod, this.player, this.OriginalDifficulty );
 					}
 				}
 			}

@@ -54,10 +54,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfigDefaults.cs" />
     <Compile Include="Items\ExtraLifeItem.cs" />
     <Compile Include="LivesMod.cs" />
-    <Compile Include="LivesNetProtocol.cs" />
     <Compile Include="LivesPlayer.cs" />
+    <Compile Include="NetProtocol\ClientPacketHandlers.cs" />
+    <Compile Include="NetProtocol\NetProtocolTypes.cs" />
+    <Compile Include="NetProtocol\ServerPacketHandlers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

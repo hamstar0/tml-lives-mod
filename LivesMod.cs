@@ -1,5 +1,6 @@
 ﻿using HamstarHelpers.PlayerHelpers;
 using HamstarHelpers.Utilities.Config;
+using Lives.NetProtocol;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
@@ -10,23 +11,28 @@ using Terraria.ModLoader;
 
 
 namespace Lives {
-	public class ConfigurationData {
-		public string VersionSinceUpdate = "";
-
-		public bool Enabled = true;
-
-		public int InitialLives = 3;
-		public int MaxLives = 99;
-
-		public bool CraftableExtraLives = true;
-		public int ExtraLifeGoldCoins = 15;
-		public bool ExtraLifeVoodoo = true;
-	}
-
-
 	public class LivesMod : Mod {
-		public static readonly Version ConfigVersion = new Version( 1, 5, 4 );
-		public JsonConfig<ConfigurationData> Config { get; private set; }
+		public static string GithubUserName { get { return "hamstar0"; } }
+		public static string GithubProjectName { get { return "tml-lives-mod"; } }
+
+		public static string ConfigRelativeFilePath {
+			get { return ConfigurationDataBase.RelativePath + Path.DirectorySeparatorChar + LivesConfigData.ConfigFileName; }
+		}
+		public static void ReloadConfigFromFile() {
+			if( Main.netMode != 0 ) {
+				throw new Exception("Cannot reload configs outside of single player.");
+			}
+			if( LivesMod.Instance != null ) {
+				LivesMod.Instance.Config.LoadFile();
+			}
+		}
+
+		public static LivesMod Instance { get; private set; }
+
+
+		////////////////
+
+		public JsonConfig<LivesConfigData> Config { get; private set; }
 
 
 		public LivesMod() {
@@ -35,41 +41,47 @@ namespace Lives {
 				AutoloadGores = true,
 				AutoloadSounds = true
 			};
-
-			string filename = "Lives Config.json";
-			this.Config = new JsonConfig<ConfigurationData>( filename, "Mod Configs", new ConfigurationData() );
+			
+			this.Config = new JsonConfig<LivesConfigData>( LivesConfigData.ConfigFileName, ConfigurationDataBase.RelativePath, new LivesConfigData() );
 		}
 
 		public override void Load() {
-			var old_config = new JsonConfig<ConfigurationData>( "Lives 1.2.0.json", "", new ConfigurationData() );
+			LivesMod.Instance = this;
+
+			var old_config = new JsonConfig<LivesConfigData>( "Lives 1.2.0.json", "", new LivesConfigData() );
 			// Update old config to new location
 			if( old_config.LoadFile() ) {
 				old_config.DestroyFile();
-				old_config.SetFilePath( this.Config.FileName, "Mod Configs" );
+				old_config.SetFilePath( this.Config.FileName, ConfigurationDataBase.RelativePath );
 				this.Config = old_config;
-			} else if( !this.Config.LoadFile() ) {
-				this.Config.SaveFile();
-			} else {
-				Version vers_since = this.Config.Data.VersionSinceUpdate != "" ?
-					new Version( this.Config.Data.VersionSinceUpdate ) :
-					new Version();
-
-				if( vers_since < LivesMod.ConfigVersion ) {
-					ErrorLogger.Log( "Lives config updated to " + LivesMod.ConfigVersion.ToString() );
-
-					this.Config.Data.VersionSinceUpdate = LivesMod.ConfigVersion.ToString();
-					this.Config.SaveFile();
-				}
 			}
+			
+			if( !this.Config.LoadFile() ) {
+				this.Config.SaveFile();
+			}
+
+			if( this.Config.Data.UpdateToLatestVersion() ) {
+				ErrorLogger.Log( "Lives config updated to " + LivesConfigData.ConfigVersion.ToString() );
+				this.Config.SaveFile();
+			}
+		}
+
+		public override void Unload() {
+			LivesMod.Instance = null;
 		}
 
 
 
 		////////////////
 
-		public override void HandlePacket( BinaryReader reader, int whoAmI ) {
-			LivesNetProtocol.RoutePacket( this, reader );
+		public override void HandlePacket( BinaryReader reader, int player_who ) {
+			if( Main.netMode == 1 ) {   // Client
+				ClientPacketHandlers.HandlePacket( this, reader );
+			} else if( Main.netMode == 2 ) {    // Server
+				ServerPacketHandlers.HandlePacket( this, reader, player_who );
+			}
 		}
+
 
 		////////////////
 
@@ -83,7 +95,7 @@ namespace Lives {
 			int lives = modplayer.Lives;
 			Vector2 pos = new Vector2(Main.screenWidth - 38, Main.screenHeight - 26);
 
-			PlayerHeadHelpers.DrawPlayerHead(sb, Main.player[Main.myPlayer], Main.screenWidth - 48, Main.screenHeight - 24, 1f, 1f);
+			PlayerHeadDisplayHelpers.DrawPlayerHead(sb, Main.player[Main.myPlayer], Main.screenWidth - 48, Main.screenHeight - 24, 1f, 1f);
 			sb.DrawString( Main.fontMouseText, " x" + lives, pos, Color.White );
 		}
 	}
