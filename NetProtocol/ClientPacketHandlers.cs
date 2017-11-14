@@ -54,7 +54,7 @@ namespace Lives.NetProtocol {
 
 			mymod.Config.DeserializeMe( reader.ReadString() );
 
-			var modplayer = Main.player[Main.myPlayer].GetModPlayer<LivesPlayer>( mymod );
+			var modplayer = Main.player[Main.myPlayer].GetModPlayer<MyPlayer>( mymod );
 			modplayer.UpdateMortality();
 		}
 	}

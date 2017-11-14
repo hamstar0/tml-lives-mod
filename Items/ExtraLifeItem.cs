@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 
 
 namespace Lives.Items {
-	public class ExtraLifeItem : ModItem {
+	class ExtraLifeItem : ModItem {
 		public override void SetStaticDefaults() {
 			this.DisplayName.SetDefault( "1-Up" );
 			this.Tooltip.SetDefault( "Extra life (except for hardcore folk)" );
@@ -42,7 +42,7 @@ namespace Lives.Items {
 		}
 
 		public override bool ConsumeItem( Player player ) {
-			LivesPlayer modplayer = player.GetModPlayer<LivesPlayer>(this.mod);
+			MyPlayer modplayer = player.GetModPlayer<MyPlayer>(this.mod);
 			return modplayer.AddLives( 1 );
 		}
 

@@ -11,7 +11,9 @@ using Terraria.ModLoader;
 
 
 namespace Lives {
-	public class LivesMod : Mod {
+	class LivesMod : Mod {
+		public static LivesMod Instance { get; private set; }
+
 		public static string GithubUserName { get { return "hamstar0"; } }
 		public static string GithubProjectName { get { return "tml-lives-mod"; } }
 
@@ -22,12 +24,8 @@ namespace Lives {
 			if( Main.netMode != 0 ) {
 				throw new Exception("Cannot reload configs outside of single player.");
 			}
-			if( LivesMod.Instance != null ) {
-				LivesMod.Instance.Config.LoadFile();
-			}
+			LivesMod.Instance.Config.LoadFile();
 		}
-
-		public static LivesMod Instance { get; private set; }
 
 
 		////////////////
@@ -91,7 +89,7 @@ namespace Lives {
 			Player player = Main.player[Main.myPlayer];
 			if( player.difficulty == 2 ) { return; }
 			
-			var modplayer = player.GetModPlayer<LivesPlayer>(this);
+			var modplayer = player.GetModPlayer<MyPlayer>(this);
 			int lives = modplayer.Lives;
 			Vector2 pos = new Vector2(Main.screenWidth - 38, Main.screenHeight - 26);
 

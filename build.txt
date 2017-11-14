@@ -1,5 +1,5 @@
 author = hamstar
-version = 1.5.5
+version = 1.5.5.1
 displayName = Lives
 modReferences = HamstarHelpers
 buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*
