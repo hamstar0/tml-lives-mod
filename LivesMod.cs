@@ -46,6 +46,16 @@ namespace Lives {
 		public override void Load() {
 			LivesMod.Instance = this;
 
+			var hamhelpmod = ModLoader.GetMod( "HamstarHelpers" );
+			var min_vers = new Version( 1, 2, 0 );
+			if( hamhelpmod.Version < min_vers ) {
+				throw new Exception( "Hamstar Helpers must be version " + min_vers.ToString() + " or greater." );
+			}
+
+			this.LoadConfigs();
+		}
+		
+		private void LoadConfigs() {
 			var old_config = new JsonConfig<LivesConfigData>( "Lives 1.2.0.json", "", new LivesConfigData() );
 			// Update old config to new location
 			if( old_config.LoadFile() ) {
