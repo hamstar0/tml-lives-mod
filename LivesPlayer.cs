@@ -7,7 +7,7 @@ using Terraria.ModLoader.IO;
 
 
 namespace Lives {
-	class MyPlayer : ModPlayer {
+	class LivesPlayer : ModPlayer {
 		public int Lives { get; private set; }
 		public int Deaths { get; private set; }
 		public byte OriginalDifficulty { get; private set; }
@@ -27,7 +27,7 @@ namespace Lives {
 
 		public override void clientClone( ModPlayer clone ) {
 			base.clientClone( clone );
-			var myclone = (MyPlayer)clone;
+			var myclone = (LivesPlayer)clone;
 			
 			myclone.IsImmortal = this.IsImmortal;
 			myclone.Lives = this.Lives;

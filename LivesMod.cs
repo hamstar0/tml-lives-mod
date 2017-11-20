@@ -99,7 +99,7 @@ namespace Lives {
 			Player player = Main.player[Main.myPlayer];
 			if( player.difficulty == 2 ) { return; }
 			
-			var modplayer = player.GetModPlayer<MyPlayer>(this);
+			var modplayer = player.GetModPlayer<LivesPlayer>(this);
 			int lives = modplayer.Lives;
 			Vector2 pos = new Vector2(Main.screenWidth - 38, Main.screenHeight - 26);
 
