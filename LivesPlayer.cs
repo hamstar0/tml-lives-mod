@@ -1,20 +1,22 @@
 ﻿using Lives.NetProtocol;
 using System;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
 
 namespace Lives {
-	class LivesPlayer : ModPlayer {
+	partial class LivesPlayer : ModPlayer {
 		public int Lives { get; private set; }
 		public int Deaths { get; private set; }
 		public byte OriginalDifficulty { get; private set; }
 		public bool IsImmortal { get; private set; }
 
 
+
 		////////////////
+
+		public override bool CloneNewInstances { get { return false; } }
 
 		public override void Initialize() {
 			var mymod = (LivesMod)this.mod;
@@ -36,23 +38,48 @@ namespace Lives {
 		}
 
 
-		public override void OnEnterWorld( Player player ) {
+		////////////////
+
+		public override void SyncPlayer( int to_who, int from_who, bool new_player ) {
 			var mymod = (LivesMod)this.mod;
 
-			if( player.whoAmI == this.player.whoAmI ) { // Current player
-				if( Main.netMode != 2 ) { // Not server
-					if( !mymod.ConfigJson.LoadFile() ) {
-						mymod.ConfigJson.SaveFile();
-					}
-				}
-
-				if( Main.netMode == 1 ) { // Client
-					ClientPacketHandlers.RequestSettingsWithClient( mymod, player );
-				} else {
-					this.UpdateMortality();
+			if( Main.netMode == 2 ) {
+				if( to_who == -1 && from_who == this.player.whoAmI ) {
+					this.OnServerConnect();
 				}
 			}
 		}
+
+		public override void OnEnterWorld( Player player ) {
+			if( player.whoAmI != this.player.whoAmI ) { return; }
+
+			var mymod = (LivesMod)this.mod;
+
+			if( Main.netMode == 0 ) {
+				if( !mymod.ConfigJson.LoadFile() ) {
+					mymod.ConfigJson.SaveFile();
+					ErrorLogger.Log( "Lives config " + LivesConfigData.ConfigVersion.ToString() + " created (ModPlayer.OnEnterWorld())." );
+				}
+			}
+
+			if( Main.netMode == 0 ) {
+				this.OnSingleConnect();
+			}
+			if( Main.netMode == 1 ) {
+				this.OnClientConnect();
+			}
+		}
+
+		private void OnSingleConnect() {
+			this.UpdateMortality();
+		}
+		private void OnClientConnect() {
+			ClientPacketHandlers.RequestSettingsWithClient( (LivesMod)this.mod, player );
+		}
+		private void OnServerConnect() {
+			this.UpdateMortality();
+		}
+
 
 		////////////////
 		
@@ -79,72 +106,6 @@ namespace Lives {
 				{"difficulty", this.OriginalDifficulty}
 			};
 			return tags;
-		}
-
-		////////////////
-
-		public override bool PreKill( double damage, int hit_direction, bool pvp, ref bool play_sound, ref bool gen_gore, ref PlayerDeathReason damage_source ) {
-			var mymod = (LivesMod)this.mod;
-			if( !mymod.ConfigJson.Data.Enabled ) { base.PreKill( damage, hit_direction, pvp, ref play_sound, ref gen_gore, ref damage_source ); }
-
-			this.Deaths++;
-			if( !this.IsImmortal ) {
-				this.Lives -= 1;
-			}
-
-			this.UpdateMortality();
-
-			return base.PreKill( damage, hit_direction, pvp, ref play_sound, ref gen_gore, ref damage_source );
-		}
-
-
-		////////////////
-
-		public bool AddLives( int lives ) {
-			var mymod = (LivesMod)this.mod;
-
-			if( (this.Lives + lives) > mymod.ConfigJson.Data.MaxLives ) {
-				lives = mymod.ConfigJson.Data.MaxLives - this.Lives;
-			} else if( (this.Lives + lives) < 0 ) {
-				lives = -this.Lives;
-			}
-
-			this.Lives += lives;
-
-			this.UpdateMortality();
-			
-			return true;
-		}
-
-
-		////////////////
-
-		public void UpdateMortality() {
-			var mymod = (LivesMod)this.mod;
-
-			if( this.Lives > mymod.ConfigJson.Data.MaxLives ) {
-				this.Lives = mymod.ConfigJson.Data.MaxLives;
-			}
-			
-			if( this.player.difficulty != 2 ) { // Not hardcore
-				if( !this.IsImmortal ) {
-					if( this.Lives <= 0 ) {
-						this.player.difficulty = 2;  // Set hardcore
-
-						if( Main.netMode == 1 ) {   // Client
-							ClientPacketHandlers.SignalDifficultyChangeFromClient( mymod, this.player, 2 );
-						}
-					}
-				}
-			} else {
-				if( this.Lives > 0 && this.OriginalDifficulty != 2 ) {
-					this.player.difficulty = this.OriginalDifficulty;
-
-					if( Main.netMode == 1 ) {	// Client
-						ClientPacketHandlers.SignalDifficultyChangeFromClient( mymod, this.player, this.OriginalDifficulty );
-					}
-				}
-			}
 		}
 	}
 }
