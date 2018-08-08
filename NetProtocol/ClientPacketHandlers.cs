@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using HamstarHelpers.Components.Errors;
+using System.IO;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -52,7 +53,12 @@ namespace Lives.NetProtocol {
 		private static void ReceiveSettingsWithClient( LivesMod mymod, BinaryReader reader ) {
 			if( Main.netMode != 1 ) { return; } // Clients only
 
-			mymod.Config.DeserializeMe( reader.ReadString() );
+			bool success;
+
+			mymod.ConfigJson.DeserializeMe( reader.ReadString(), out success );
+			if( !success ) {
+				throw new HamstarException("Lives.NetProtocol.ClientPacketHandler.ReceiveSettingsWithClient - Could not deserialize mod settings.");
+			}
 
 			var modplayer = Main.player[Main.myPlayer].GetModPlayer<LivesPlayer>( mymod );
 			modplayer.UpdateMortality();

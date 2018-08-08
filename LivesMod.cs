@@ -1,5 +1,5 @@
-﻿using HamstarHelpers.PlayerHelpers;
-using HamstarHelpers.Utilities.Config;
+﻿using HamstarHelpers.Components.Config;
+using HamstarHelpers.Helpers.PlayerHelpers;
 using Lives.NetProtocol;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -11,27 +11,17 @@ using Terraria.ModLoader;
 
 
 namespace Lives {
-	class LivesMod : Mod {
+	partial class LivesMod : Mod {
 		public static LivesMod Instance { get; private set; }
-
-		public static string GithubUserName { get { return "hamstar0"; } }
-		public static string GithubProjectName { get { return "tml-lives-mod"; } }
-
-		public static string ConfigFileRelativePath {
-			get { return ConfigurationDataBase.RelativePath + Path.DirectorySeparatorChar + LivesConfigData.ConfigFileName; }
-		}
-		public static void ReloadConfigFromFile() {
-			if( Main.netMode != 0 ) {
-				throw new Exception("Cannot reload configs outside of single player.");
-			}
-			LivesMod.Instance.Config.LoadFile();
-		}
 
 
 		////////////////
 
-		public JsonConfig<LivesConfigData> Config { get; private set; }
+		public JsonConfig<LivesConfigData> ConfigJson { get; private set; }
+		public LivesConfigData Config { get { return this.ConfigJson.Data; } }
 
+
+		////////////////
 
 		public LivesMod() {
 			this.Properties = new ModProperties() {
@@ -40,7 +30,7 @@ namespace Lives {
 				AutoloadSounds = true
 			};
 			
-			this.Config = new JsonConfig<LivesConfigData>( LivesConfigData.ConfigFileName, ConfigurationDataBase.RelativePath, new LivesConfigData() );
+			this.ConfigJson = new JsonConfig<LivesConfigData>( LivesConfigData.ConfigFileName, ConfigurationDataBase.RelativePath, new LivesConfigData() );
 		}
 
 		public override void Load() {
@@ -60,17 +50,17 @@ namespace Lives {
 			// Update old config to new location
 			if( old_config.LoadFile() ) {
 				old_config.DestroyFile();
-				old_config.SetFilePath( this.Config.FileName, ConfigurationDataBase.RelativePath );
-				this.Config = old_config;
+				old_config.SetFilePath( this.ConfigJson.FileName, ConfigurationDataBase.RelativePath );
+				this.ConfigJson = old_config;
 			}
 			
-			if( !this.Config.LoadFile() ) {
-				this.Config.SaveFile();
+			if( !this.ConfigJson.LoadFile() ) {
+				this.ConfigJson.SaveFile();
 			}
 
-			if( this.Config.Data.UpdateToLatestVersion() ) {
+			if( this.ConfigJson.Data.UpdateToLatestVersion() ) {
 				ErrorLogger.Log( "Lives config updated to " + LivesConfigData.ConfigVersion.ToString() );
-				this.Config.SaveFile();
+				this.ConfigJson.SaveFile();
 			}
 		}
 
@@ -78,6 +68,21 @@ namespace Lives {
 			LivesMod.Instance = null;
 		}
 
+
+
+		////////////////
+
+		public override object Call( params object[] args ) {
+			if( args.Length == 0 ) { throw new Exception( "Undefined call type." ); }
+
+			string call_type = args[0] as string;
+			if( args == null ) { throw new Exception( "Invalid call type." ); }
+
+			var new_args = new object[args.Length - 1];
+			Array.Copy( args, 1, new_args, 0, args.Length - 1 );
+
+			return LivesAPI.Call( call_type, new_args );
+		}
 
 
 		////////////////
@@ -94,7 +99,7 @@ namespace Lives {
 		////////////////
 
 		public override void PostDrawInterface( SpriteBatch sb ) {
-			if( !this.Config.Data.Enabled ) { return; }
+			if( !this.ConfigJson.Data.Enabled ) { return; }
 
 			Player player = Main.player[Main.myPlayer];
 			if( player.difficulty == 2 ) { return; }

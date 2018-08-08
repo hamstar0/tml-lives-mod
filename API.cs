@@ -1,9 +1,11 @@
-﻿using Terraria;
+﻿using System;
+using Terraria;
+
 
 namespace Lives {
-	public static class LivesAPI {
+	public static partial class LivesAPI {
 		public static LivesConfigData GetModSettings() {
-			return LivesMod.Instance.Config.Data;
+			return LivesMod.Instance.ConfigJson.Data;
 		}
 
 
@@ -24,7 +26,7 @@ namespace Lives {
 			var myplayer = player.GetModPlayer<LivesPlayer>();
 			return myplayer.OriginalDifficulty;
 		}
-		public static bool IsImmorta( Player player ) {
+		public static bool IsImmortal( Player player ) {
 			var myplayer = player.GetModPlayer<LivesPlayer>();
 			return myplayer.IsImmortal;
 		}

@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Lives</RootNamespace>
     <AssemblyName>Lives</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,8 +32,12 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="HamstarHelpers">
-      <HintPath>..\HamstarHelpers\bin\Release\HamstarHelpers.dll</HintPath>
+    <Reference Include="HamstarHelpers, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Helpers\HamstarHelpers\bin\Release\HamstarHelpers.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\..\Reference\tModLoader Patcher\references\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -45,18 +50,20 @@
     <Reference Include="Microsoft.Xna.Framework" />
     <Reference Include="Microsoft.Xna.Framework.Game" />
     <Reference Include="Microsoft.Xna.Framework.Graphics" />
-    <Reference Include="Terraria">
-      <HintPath>..\..\..\..\..\Program Files\Steam\steamapps\common\Terraria\Terraria.exe</HintPath>
-    </Reference>
     <Reference Include="Terraria.Libraries.ReLogic.ReLogic, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Reference\Terraria.Libraries.ReLogic.ReLogic.dll</HintPath>
+      <HintPath>..\..\..\Reference\Terraria.Libraries.ReLogic.ReLogic.dll</HintPath>
+    </Reference>
+    <Reference Include="tModLoaderServerDebug">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Terraria\tModLoaderServerDebug.exe</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="API_Call.cs" />
     <Compile Include="API.cs" />
     <Compile Include="ConfigDefaults.cs" />
     <Compile Include="Items\ExtraLifeItem.cs" />
+    <Compile Include="LivesMod_Meta.cs" />
     <Compile Include="LivesMod.cs" />
     <Compile Include="LivesPlayer.cs" />
     <Compile Include="NetProtocol\ClientPacketHandlers.cs" />
@@ -70,9 +77,13 @@
     <Content Include="icon.png" />
     <Content Include="Items\ExtraLifeItem.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="LICENSE" />
+    <None Include="README.md" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>"C:\Program Files\Steam\steamapps\common\Terraria\tModLoaderServer.exe" -build "$(ProjectDir)\" -eac "$(TargetPath)"</PostBuildEvent>
+    <PostBuildEvent>"C:\Program Files (x86)\Steam\steamapps\common\terraria\tModLoaderServer.exe" -build "$(ProjectDir)\" -eac "$(TargetPath)"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -33,7 +33,7 @@ namespace Lives.NetProtocol {
 			ModPacket packet = mymod.GetPacket();
 
 			packet.Write( (byte)LivesNetProtocolTypes.ModSettings );
-			packet.Write( (string)mymod.Config.SerializeMe() );
+			packet.Write( (string)mymod.ConfigJson.SerializeMe() );
 
 			packet.Send( (int)player.whoAmI );
 		}

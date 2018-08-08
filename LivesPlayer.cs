@@ -19,7 +19,7 @@ namespace Lives {
 		public override void Initialize() {
 			var mymod = (LivesMod)this.mod;
 
-			this.Lives = mymod.Config.Data.InitialLives;
+			this.Lives = mymod.ConfigJson.Data.InitialLives;
 			this.Deaths = 0;
 			this.OriginalDifficulty = this.player.difficulty;
 			this.IsImmortal = false;
@@ -41,8 +41,8 @@ namespace Lives {
 
 			if( player.whoAmI == this.player.whoAmI ) { // Current player
 				if( Main.netMode != 2 ) { // Not server
-					if( !mymod.Config.LoadFile() ) {
-						mymod.Config.SaveFile();
+					if( !mymod.ConfigJson.LoadFile() ) {
+						mymod.ConfigJson.SaveFile();
 					}
 				}
 
@@ -85,7 +85,7 @@ namespace Lives {
 
 		public override bool PreKill( double damage, int hit_direction, bool pvp, ref bool play_sound, ref bool gen_gore, ref PlayerDeathReason damage_source ) {
 			var mymod = (LivesMod)this.mod;
-			if( !mymod.Config.Data.Enabled ) { base.PreKill( damage, hit_direction, pvp, ref play_sound, ref gen_gore, ref damage_source ); }
+			if( !mymod.ConfigJson.Data.Enabled ) { base.PreKill( damage, hit_direction, pvp, ref play_sound, ref gen_gore, ref damage_source ); }
 
 			this.Deaths++;
 			if( !this.IsImmortal ) {
@@ -103,8 +103,8 @@ namespace Lives {
 		public bool AddLives( int lives ) {
 			var mymod = (LivesMod)this.mod;
 
-			if( (this.Lives + lives) > mymod.Config.Data.MaxLives ) {
-				lives = mymod.Config.Data.MaxLives - this.Lives;
+			if( (this.Lives + lives) > mymod.ConfigJson.Data.MaxLives ) {
+				lives = mymod.ConfigJson.Data.MaxLives - this.Lives;
 			} else if( (this.Lives + lives) < 0 ) {
 				lives = -this.Lives;
 			}
@@ -122,8 +122,8 @@ namespace Lives {
 		public void UpdateMortality() {
 			var mymod = (LivesMod)this.mod;
 
-			if( this.Lives > mymod.Config.Data.MaxLives ) {
-				this.Lives = mymod.Config.Data.MaxLives;
+			if( this.Lives > mymod.ConfigJson.Data.MaxLives ) {
+				this.Lives = mymod.ConfigJson.Data.MaxLives;
 			}
 			
 			if( this.player.difficulty != 2 ) { // Not hardcore
