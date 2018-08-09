@@ -51,7 +51,8 @@ namespace Lives {
 		}
 
 		public override void OnEnterWorld( Player player ) {
-			if( player.whoAmI != this.player.whoAmI ) { return; }
+			if( player.whoAmI != Main.myPlayer ) { return; }
+			if( this.player.whoAmI != Main.myPlayer ) { return; }
 
 			var mymod = (LivesMod)this.mod;
 
