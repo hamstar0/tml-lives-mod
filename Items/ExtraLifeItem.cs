@@ -25,7 +25,7 @@ namespace Lives.Items {
 			this.item.rare = 4;
 		}
 
-		public override void Update( ref float gravity, ref float max_fall_speed ) {
+		public override void Update( ref float gravity, ref float maxFallSpeed ) {
 			if( Main.rand.Next( 6 ) == 0 ) {
 				int who = Dust.NewDust( this.item.position, this.item.width, this.item.height, 55, 0f, 0f, 200, Color.Gold, 1f );
 				Main.dust[who].velocity *= 0.3f;
@@ -59,10 +59,10 @@ namespace Lives.Items {
 
 
 	class ExtraLifeRecipe : ModRecipe {
-		public ExtraLifeRecipe( LivesMod mymod, ExtraLifeItem myitem, int item_id, int base_quantity ) : base( mymod ) {
+		public ExtraLifeRecipe( LivesMod mymod, ExtraLifeItem myitem, int itemId, int baseQuantity ) : base( mymod ) {
 			int coins = mymod.ConfigJson.Data.ExtraLifeGoldCoins;
 
-			this.AddIngredient( item_id, base_quantity );
+			this.AddIngredient( itemId, baseQuantity );
 
 			if( mymod.ConfigJson.Data.ExtraLifeVoodoo ) {
 				this.AddIngredient( ItemID.GuideVoodooDoll, 1 );

@@ -1,22 +1,23 @@
-﻿using System.IO;
+﻿using HamstarHelpers.Helpers.DebugHelpers;
+using System.IO;
 using Terraria;
 using Terraria.ModLoader;
 
 
 namespace Lives.NetProtocol {
 	static class ServerPacketHandlers {
-		public static void HandlePacket( LivesMod mymod, BinaryReader reader, int player_who ) {
+		public static void HandlePacket( BinaryReader reader, int playerWho ) {
 			LivesNetProtocolTypes protocol = (LivesNetProtocolTypes)reader.ReadByte();
 
 			switch( protocol ) {
 			case LivesNetProtocolTypes.RequestModSettings:
-				ServerPacketHandlers.ReceiveSettingsRequestWithServer( mymod, reader, player_who );
+				ServerPacketHandlers.ReceiveSettingsRequestWithServer( reader, playerWho );
 				break;
 			case LivesNetProtocolTypes.SignalDifficultyChange:
-				ServerPacketHandlers.ReceiveDifficultyChangeSignalWithServer( mymod, reader, player_who );
+				ServerPacketHandlers.ReceiveDifficultyChangeSignalWithServer( reader, playerWho );
 				break;
 			default:
-				ErrorLogger.Log( "Invalid packet protocol: " + protocol );
+				LogHelpers.Warn( "Invalid packet protocol: " + protocol );
 				break;
 			}
 		}
@@ -27,9 +28,10 @@ namespace Lives.NetProtocol {
 		// Senders (server)
 		////////////////////////////////
 
-		public static void SendSettingsFromServer( LivesMod mymod, Player player ) {
+		public static void SendSettingsFromServer( Player player ) {
 			if( Main.netMode != 2 ) { return; } // Server only
 
+			var mymod = LivesMod.Instance;
 			ModPacket packet = mymod.GetPacket();
 
 			packet.Write( (byte)LivesNetProtocolTypes.ModSettings );
@@ -44,19 +46,20 @@ namespace Lives.NetProtocol {
 		// Recipients (server)
 		////////////////////////////////
 
-		private static void ReceiveSettingsRequestWithServer( LivesMod mymod, BinaryReader reader, int player_who ) {
+		private static void ReceiveSettingsRequestWithServer( BinaryReader reader, int player_who ) {
 			if( Main.netMode != 2 ) { return; } // Server only
 
-			ServerPacketHandlers.SendSettingsFromServer( mymod, Main.player[player_who] );
+			ServerPacketHandlers.SendSettingsFromServer( Main.player[player_who] );
 		}
 
-		private static void ReceiveDifficultyChangeSignalWithServer( LivesMod mymod, BinaryReader reader, int player_who ) {
+		private static void ReceiveDifficultyChangeSignalWithServer( BinaryReader reader, int player_who ) {
 			if( Main.netMode != 2 ) { return; } // Clients only
-			
+
+			var mymod = LivesMod.Instance;
 			byte difficulty = reader.ReadByte();
 			
 			if( difficulty < 0 || difficulty > 2 ) {
-				ErrorLogger.Log( "ReceiveDifficultyChangeSignalWithServer - Invalid difficulty setting. " + difficulty );
+				LogHelpers.Warn( "Invalid difficulty setting. " + difficulty );
 				return;
 			}
 

@@ -1,4 +1,5 @@
 ﻿using HamstarHelpers.Components.Errors;
+using HamstarHelpers.Helpers.DebugHelpers;
 using System.IO;
 using Terraria;
 using Terraria.ModLoader;
@@ -6,15 +7,15 @@ using Terraria.ModLoader;
 
 namespace Lives.NetProtocol {
 	static class ClientPacketHandlers {
-		public static void HandlePacket( LivesMod mymod, BinaryReader reader ) {
+		public static void HandlePacket( BinaryReader reader ) {
 			LivesNetProtocolTypes protocol = (LivesNetProtocolTypes)reader.ReadByte();
 
 			switch( protocol ) {
 			case LivesNetProtocolTypes.ModSettings:
-				ClientPacketHandlers.ReceiveSettingsWithClient( mymod, reader );
+				ClientPacketHandlers.ReceiveSettingsWithClient( reader );
 				break;
 			default:
-				ErrorLogger.Log( "Invalid packet protocol: " + protocol );
+				LogHelpers.Warn( "Invalid packet protocol: " + protocol );
 				break;
 			}
 		}
@@ -25,18 +26,20 @@ namespace Lives.NetProtocol {
 		// Senders (client)
 		////////////////////////////////
 
-		public static void RequestSettingsWithClient( LivesMod mymod, Player player ) {
+		public static void RequestSettingsWithClient( Player player ) {
 			if( Main.netMode != 1 ) { return; } // Clients only
 
+			var mymod = LivesMod.Instance;
 			ModPacket packet = mymod.GetPacket();
 
 			packet.Write( (byte)LivesNetProtocolTypes.RequestModSettings );
 			packet.Send();
 		}
 
-		public static void SignalDifficultyChangeFromClient( LivesMod mymod, Player player, byte difficulty ) {
+		public static void SignalDifficultyChangeFromClient( Player player, byte difficulty ) {
 			if( Main.netMode != 1 ) { return; } // Clients only
 
+			var mymod = LivesMod.Instance;
 			ModPacket packet = mymod.GetPacket();
 
 			packet.Write( (byte)LivesNetProtocolTypes.SignalDifficultyChange );
@@ -50,17 +53,18 @@ namespace Lives.NetProtocol {
 		// Recipients (client)
 		////////////////////////////////
 
-		private static void ReceiveSettingsWithClient( LivesMod mymod, BinaryReader reader ) {
+		private static void ReceiveSettingsWithClient( BinaryReader reader ) {
 			if( Main.netMode != 1 ) { return; } // Clients only
 
+			var mymod = LivesMod.Instance;
 			bool success;
 
 			mymod.ConfigJson.DeserializeMe( reader.ReadString(), out success );
 			if( !success ) {
-				throw new HamstarException("Lives.NetProtocol.ClientPacketHandler.ReceiveSettingsWithClient - Could not deserialize mod settings.");
+				throw new HamstarException("Could not deserialize mod settings.");
 			}
 
-			var modplayer = Main.player[Main.myPlayer].GetModPlayer<LivesPlayer>( mymod );
+			var modplayer = Main.player[Main.myPlayer].GetModPlayer<LivesPlayer>();
 			modplayer.UpdateMortality();
 		}
 	}

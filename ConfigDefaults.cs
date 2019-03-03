@@ -4,7 +4,6 @@ using System;
 
 namespace Lives {
 	public class LivesConfigData : ConfigurationDataBase {
-		public static readonly Version ConfigVersion = new Version( 1, 5, 4 );
 		public static readonly string ConfigFileName = "Lives Config.json";
 
 
@@ -31,11 +30,11 @@ namespace Lives {
 				new Version( this.VersionSinceUpdate ) :
 				new Version();
 
-			if( vers_since >= LivesConfigData.ConfigVersion ) {
+			if( vers_since >= LivesMod.Instance.Version ) {
 				return false;
 			}
 
-			this.VersionSinceUpdate = LivesConfigData.ConfigVersion.ToString();
+			this.VersionSinceUpdate = LivesMod.Instance.Version.ToString();
 
 			return true;
 		}

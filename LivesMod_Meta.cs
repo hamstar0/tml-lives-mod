@@ -7,8 +7,8 @@ using Terraria.ModLoader;
 
 namespace Lives {
 	partial class LivesMod : Mod {
-		public static string GithubUserName { get { return "hamstar0"; } }
-		public static string GithubProjectName { get { return "tml-lives-mod"; } }
+		public static string GithubUserName => "hamstar0";
+		public static string GithubProjectName => "tml-lives-mod";
 
 		public static string ConfigFileRelativePath {
 			get { return ConfigurationDataBase.RelativePath + Path.DirectorySeparatorChar + LivesConfigData.ConfigFileName; }
@@ -30,10 +30,10 @@ namespace Lives {
 				throw new Exception( "Cannot reset to default configs outside of single player." );
 			}
 
-			var new_config = new LivesConfigData();
+			var newConfig = new LivesConfigData();
 			//new_config.SetDefaults();
 
-			LivesMod.Instance.ConfigJson.SetData( new_config );
+			LivesMod.Instance.ConfigJson.SetData( newConfig );
 			LivesMod.Instance.ConfigJson.SaveFile();
 		}
 	}

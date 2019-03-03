@@ -1,4 +1,5 @@
-﻿using Lives.NetProtocol;
+﻿using HamstarHelpers.Helpers.DebugHelpers;
+using Lives.NetProtocol;
 using System;
 using Terraria;
 using Terraria.ModLoader;
@@ -12,19 +13,18 @@ namespace Lives {
 		public byte OriginalDifficulty { get; private set; }
 		public bool IsImmortal { get; private set; }
 
+		
+		////////////////
+
+		public override bool CloneNewInstances => false;
+
 
 
 		////////////////
 
-		public override bool CloneNewInstances { get { return false; } }
-
 		public override void Initialize() {
-			var mymod = (LivesMod)this.mod;
-
-			this.Lives = mymod.ConfigJson.Data.InitialLives;
-			this.Deaths = 0;
 			this.OriginalDifficulty = this.player.difficulty;
-			this.IsImmortal = false;
+			this.ResetLivesToDefault();
 		}
 
 		public override void clientClone( ModPlayer clone ) {
@@ -40,11 +40,11 @@ namespace Lives {
 
 		////////////////
 
-		public override void SyncPlayer( int to_who, int from_who, bool new_player ) {
+		public override void SyncPlayer( int toWho, int fromWho, bool newPlayer ) {
 			var mymod = (LivesMod)this.mod;
 
 			if( Main.netMode == 2 ) {
-				if( to_who == -1 && from_who == this.player.whoAmI ) {
+				if( toWho == -1 && fromWho == this.player.whoAmI ) {
 					this.OnServerConnect();
 				}
 			}
@@ -59,7 +59,7 @@ namespace Lives {
 			if( Main.netMode == 0 ) {
 				if( !mymod.ConfigJson.LoadFile() ) {
 					mymod.ConfigJson.SaveFile();
-					ErrorLogger.Log( "Lives config " + LivesConfigData.ConfigVersion.ToString() + " created (ModPlayer.OnEnterWorld())." );
+					LogHelpers.Alert( "Lives config " + mymod.Version.ToString() + " created." );
 				}
 			}
 
@@ -75,7 +75,7 @@ namespace Lives {
 			this.UpdateMortality();
 		}
 		private void OnClientConnect() {
-			ClientPacketHandlers.RequestSettingsWithClient( (LivesMod)this.mod, player );
+			ClientPacketHandlers.RequestSettingsWithClient( player );
 		}
 		private void OnServerConnect() {
 			this.UpdateMortality();
@@ -107,6 +107,17 @@ namespace Lives {
 				{"difficulty", this.OriginalDifficulty}
 			};
 			return tags;
+		}
+
+
+		////////////////
+
+		public void ResetLivesToDefault() {
+			var mymod = (LivesMod)this.mod;
+
+			this.Lives = mymod.ConfigJson.Data.InitialLives;
+			this.Deaths = 0;
+			this.IsImmortal = false;
 		}
 	}
 }

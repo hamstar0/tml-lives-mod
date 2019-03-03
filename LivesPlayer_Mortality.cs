@@ -6,9 +6,9 @@ using Terraria.ModLoader;
 
 namespace Lives {
 	partial class LivesPlayer : ModPlayer {
-		public override bool PreKill( double damage, int hit_direction, bool pvp, ref bool play_sound, ref bool gen_gore, ref PlayerDeathReason damage_source ) {
+		public override bool PreKill( double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource ) {
 			var mymod = (LivesMod)this.mod;
-			if( !mymod.ConfigJson.Data.Enabled ) { base.PreKill( damage, hit_direction, pvp, ref play_sound, ref gen_gore, ref damage_source ); }
+			if( !mymod.ConfigJson.Data.Enabled ) { base.PreKill( damage, hitDirection, pvp, ref playSound, ref genGore, ref damageSource ); }
 
 			this.Deaths++;
 			if( !this.IsImmortal ) {
@@ -17,7 +17,7 @@ namespace Lives {
 
 			this.UpdateMortality();
 
-			return base.PreKill( damage, hit_direction, pvp, ref play_sound, ref gen_gore, ref damage_source );
+			return base.PreKill( damage, hitDirection, pvp, ref playSound, ref genGore, ref damageSource );
 		}
 
 
@@ -55,7 +55,7 @@ namespace Lives {
 						this.player.difficulty = 2;  // Set hardcore
 
 						if( Main.netMode == 1 ) {   // Client
-							ClientPacketHandlers.SignalDifficultyChangeFromClient( mymod, this.player, 2 );
+							ClientPacketHandlers.SignalDifficultyChangeFromClient( this.player, 2 );
 						}
 					}
 				}
@@ -64,7 +64,7 @@ namespace Lives {
 					this.player.difficulty = this.OriginalDifficulty;
 
 					if( Main.netMode == 1 ) {	// Client
-						ClientPacketHandlers.SignalDifficultyChangeFromClient( mymod, this.player, this.OriginalDifficulty );
+						ClientPacketHandlers.SignalDifficultyChangeFromClient( this.player, this.OriginalDifficulty );
 					}
 				}
 			}
