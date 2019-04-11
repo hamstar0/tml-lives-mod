@@ -57,7 +57,6 @@ namespace Lives {
 			foreach( string penalty in this.FormatContinuePenalties() ) {
 				Main.NewText( "  "+penalty, Color.Yellow );
 			}
-			Main.NewText( " " );
 		}
 
 

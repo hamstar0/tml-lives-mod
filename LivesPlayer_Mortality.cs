@@ -28,6 +28,7 @@ namespace Lives {
 				this.Lives = mymod.ConfigJson.Data.MaxLives;
 			}
 			
+//Main.NewText("difficulty: "+this.player.difficulty+", immortal? "+this.IsImmortal+", lives: "+this.Lives+", continues? "+this.IsContinue());
 			if( this.player.difficulty != 2 ) { // Not hardcore
 				if( !this.IsImmortal ) {
 					if( this.Lives <= 0 ) {
