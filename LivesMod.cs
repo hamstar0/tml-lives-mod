@@ -39,7 +39,10 @@ namespace Lives {
 		}
 
 		public override void PostSetupContent() {
-			InboxMessages.SetMessage( "LivesFeaturingContinues", "As of v2.0.0, Lives mod now features continues. These will need to be enabled and configured in order to be used.", false );
+			InboxMessages.SetMessage( "LivesFeaturingContinues",
+				"As of v2.0.0, Lives mod now features continues. These will need to be enabled (\"ContinuesLimit\" anything but 0) in order to be used.",
+				false
+			);
 		}
 
 		public override void Unload() {
