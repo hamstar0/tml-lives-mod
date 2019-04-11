@@ -3,10 +3,7 @@ using HamstarHelpers.Components.Errors;
 using HamstarHelpers.Helpers.TmlHelpers;
 using HamstarHelpers.Helpers.TmlHelpers.ModHelpers;
 using HamstarHelpers.Services.Messages;
-using Lives.NetProtocol;
 using System;
-using System.IO;
-using Terraria;
 using Terraria.ModLoader;
 
 
@@ -82,17 +79,6 @@ namespace Lives {
 
 		public override object Call( params object[] args ) {
 			return ModBoilerplateHelpers.HandleModCall( typeof( LivesAPI ), args );
-		}
-
-
-		////////////////
-
-		public override void HandlePacket( BinaryReader reader, int playerWho ) {
-			if( Main.netMode == 1 ) {   // Client
-				ClientPacketHandlers.HandlePacket( reader );
-			} else if( Main.netMode == 2 ) {    // Server
-				ServerPacketHandlers.HandlePacket( reader, playerWho );
-			}
 		}
 	}
 }

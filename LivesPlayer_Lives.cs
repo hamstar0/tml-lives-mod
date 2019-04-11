@@ -1,4 +1,5 @@
-﻿using Lives.NetProtocol;
+﻿using HamstarHelpers.Components.Network;
+using Lives.NetProtocols;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -31,16 +32,16 @@ namespace Lives {
 
 			this.player.difficulty = this.OriginalDifficulty;
 
-			if( Main.netMode == 1 ) {
-				ClientPacketHandlers.SignalDifficultyChangeFromClient( this.player, this.OriginalDifficulty );
+			if( Main.netMode == 1 && this.player.whoAmI == Main.myPlayer ) {
+				DifficultyChangeProtocol.SendToServer( this.OriginalDifficulty );
 			}
 		}
 
 		public void ApplyDeathFinal() {
 			this.player.difficulty = 2;  // Set hardcore
 
-			if( Main.netMode == 1 ) {
-				ClientPacketHandlers.SignalDifficultyChangeFromClient( this.player, 2 );
+			if( Main.netMode == 1 && this.player.whoAmI == Main.myPlayer ) {
+				DifficultyChangeProtocol.SendToServer( 2 );
 			}
 		}
 	}

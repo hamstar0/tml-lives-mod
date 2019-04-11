@@ -1,5 +1,5 @@
 ﻿using HamstarHelpers.Services.Timers;
-using Lives.NetProtocol;
+using Lives.NetProtocols;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -39,11 +39,11 @@ namespace Lives {
 			this.ContinuesUsed++;
 
 			if( config.ContinueDeathDropItems ) {
-				this.ApplyContinueInventoryDrop();
+				this.ApplyContinueDeathInventoryDropState();
 			}
 
 			if( config.ContinueDeathMaxHpToll > 0 ) {
-				this.ApplyContinueMaxHpToll();
+				this.ApplyContinueDeathMaxHpToll();
 			}
 			if( config.ContinueDeathMaxStaminaToll > 0 ) {
 				this.ApplyContinueDeathMaxStaminaToll();
@@ -63,14 +63,14 @@ namespace Lives {
 
 		////////////////
 
-		public void ApplyContinueInventoryDrop() {
+		public void ApplyContinueDeathInventoryDropState() {
 			int who = this.player.whoAmI;
 			byte difficulty = this.player.difficulty;
 
 			this.player.difficulty = 1;  // Set mediumcore
 
-			if( Main.netMode == 1 ) {
-				ClientPacketHandlers.SignalDifficultyChangeFromClient( this.player, 3 );
+			if( Main.netMode == 1 && who == Main.myPlayer ) {
+				DifficultyChangeProtocol.SendToServer( 3 );	//<- Special amount to trigger revert after 1s
 			}
 
 			Timers.SetTimer( "LivesContinueMediumcoreRevert", 60, () => {
@@ -79,7 +79,7 @@ namespace Lives {
 			} );
 		}
 
-		public void ApplyContinueMaxHpToll() {
+		public void ApplyContinueDeathMaxHpToll() {
 			var mymod = (LivesMod)this.mod;
 			LivesConfigData config = mymod.Config;
 

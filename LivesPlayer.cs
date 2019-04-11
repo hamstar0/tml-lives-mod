@@ -1,5 +1,4 @@
 ﻿using HamstarHelpers.Helpers.DebugHelpers;
-using Lives.NetProtocol;
 using System;
 using Terraria;
 using Terraria.DataStructures;
@@ -71,18 +70,8 @@ namespace Lives {
 				this.OnSingleConnect();
 			}
 			if( Main.netMode == 1 ) {
-				this.OnClientConnect();
+				this.OnCurrentClientConnect();
 			}
-		}
-
-		private void OnSingleConnect() {
-			this.UpdateMortality();
-		}
-		private void OnClientConnect() {
-			ClientPacketHandlers.RequestSettingsWithClient( player );
-		}
-		private void OnServerConnect() {
-			this.UpdateMortality();
 		}
 
 
