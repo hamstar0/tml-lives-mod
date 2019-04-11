@@ -65,8 +65,8 @@
     <Compile Include="LivesMod_Interface.cs" />
     <Compile Include="LivesMod_Meta.cs" />
     <Compile Include="LivesMod.cs" />
-    <Compile Include="LivesPlayer_Death_Lives.cs" />
-    <Compile Include="LivesPlayer_Death_Continues.cs" />
+    <Compile Include="LivesPlayer_Lives.cs" />
+    <Compile Include="LivesPlayer_Continues.cs" />
     <Compile Include="LivesPlayer_Mortality.cs" />
     <Compile Include="LivesPlayer.cs" />
     <Compile Include="NetProtocol\ClientPacketHandlers.cs" />
