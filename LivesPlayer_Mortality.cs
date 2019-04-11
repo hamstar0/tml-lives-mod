@@ -1,23 +1,18 @@
-﻿using Lives.NetProtocol;
-using Terraria;
-using Terraria.DataStructures;
-using Terraria.ModLoader;
+﻿using Terraria.ModLoader;
 
 
 namespace Lives {
 	partial class LivesPlayer : ModPlayer {
-		public override bool PreKill( double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource ) {
+		public void DeathHappened( bool pvp ) {
 			var mymod = (LivesMod)this.mod;
-			if( !mymod.ConfigJson.Data.Enabled ) { base.PreKill( damage, hitDirection, pvp, ref playSound, ref genGore, ref damageSource ); }
 
 			this.Deaths++;
+
 			if( !this.IsImmortal ) {
 				this.Lives -= 1;
 			}
 
 			this.UpdateMortality();
-
-			return base.PreKill( damage, hitDirection, pvp, ref playSound, ref genGore, ref damageSource );
 		}
 
 
@@ -52,20 +47,16 @@ namespace Lives {
 			if( this.player.difficulty != 2 ) { // Not hardcore
 				if( !this.IsImmortal ) {
 					if( this.Lives <= 0 ) {
-						this.player.difficulty = 2;  // Set hardcore
-
-						if( Main.netMode == 1 ) {   // Client
-							ClientPacketHandlers.SignalDifficultyChangeFromClient( this.player, 2 );
+						if( this.IsContinue() ) {
+							this.ApplyContinue();
+						} else {
+							this.ApplyDeathFinal();
 						}
 					}
 				}
 			} else {
-				if( this.Lives > 0 && this.OriginalDifficulty != 2 ) {
-					this.player.difficulty = this.OriginalDifficulty;
-
-					if( Main.netMode == 1 ) {	// Client
-						ClientPacketHandlers.SignalDifficultyChangeFromClient( this.player, this.OriginalDifficulty );
-					}
+				if( this.Lives > 0 ) {
+					this.ApplyDeathNonFinal();
 				}
 			}
 		}

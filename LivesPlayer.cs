@@ -2,6 +2,7 @@
 using Lives.NetProtocol;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
@@ -107,6 +108,20 @@ namespace Lives {
 				{"difficulty", this.OriginalDifficulty}
 			};
 			return tags;
+		}
+
+
+		////////////////
+
+		public override bool PreKill( double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource ) {
+			var mymod = (LivesMod)this.mod;
+			if( !mymod.ConfigJson.Data.Enabled ) {
+				base.PreKill( damage, hitDirection, pvp, ref playSound, ref genGore, ref damageSource );
+			}
+
+			this.DeathHappened( pvp );
+
+			return base.PreKill( damage, hitDirection, pvp, ref playSound, ref genGore, ref damageSource );
 		}
 
 
