@@ -20,17 +20,25 @@ namespace Lives {
 		public int ExtraLifeGoldCoins = 15;
 		public bool ExtraLifeVoodoo = true;
 
+		public bool DrawLivesIcon = true;
+		public bool DrawLivesText = true;
+
+		public int LivesIconOffsetX = 48;
+		public int LivesIconOffsetY = 24;
+		public int LivesTextOffsetX = 38;
+		public int LivesTextOffsetY = 26;
+
 
 
 		////////////////
 
 		public bool UpdateToLatestVersion() {
-			var new_config = new LivesConfigData();
-			var vers_since = this.VersionSinceUpdate != "" ?
+			var newConfig = new LivesConfigData();
+			var versSince = this.VersionSinceUpdate != "" ?
 				new Version( this.VersionSinceUpdate ) :
 				new Version();
 
-			if( vers_since >= LivesMod.Instance.Version ) {
+			if( versSince >= LivesMod.Instance.Version ) {
 				return false;
 			}
 

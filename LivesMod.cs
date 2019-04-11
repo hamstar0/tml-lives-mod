@@ -87,17 +87,43 @@ namespace Lives {
 		////////////////
 
 		public override void PostDrawInterface( SpriteBatch sb ) {
-			if( !this.ConfigJson.Data.Enabled ) { return; }
+			if( !this.Config.Enabled ) { return; }
+			if( !this.Config.DrawLivesIcon && !this.Config.DrawLivesText ) { return; }
 
 			Player player = Main.player[Main.myPlayer];
 			if( player.difficulty == 2 ) { return; }
 			
 			var myplayer = player.GetModPlayer<LivesPlayer>();
 			int lives = myplayer.Lives;
-			Vector2 pos = new Vector2(Main.screenWidth - 38, Main.screenHeight - 26);
+			
+			if( this.Config.DrawLivesIcon ) {
+				int offsetX = this.Config.LivesIconOffsetX; //48
+				int offsetY = this.Config.LivesIconOffsetY; //24
 
-			PlayerHeadDisplayHelpers.DrawPlayerHead(sb, Main.player[Main.myPlayer], Main.screenWidth - 48, Main.screenHeight - 24, 1f, 1f);
-			sb.DrawString( Main.fontMouseText, " x" + lives, pos, Color.White );
+				int posX = offsetX < 0 ?
+					Main.screenWidth + offsetX :
+					offsetX;
+				int posY = offsetY < 0 ?
+					Main.screenHeight + offsetY :
+					offsetY;
+
+				PlayerHeadDisplayHelpers.DrawPlayerHead( sb, Main.player[Main.myPlayer], posX, posY, 1f, 1f );
+			}
+
+			if( this.Config.DrawLivesText ) {
+				int offsetX = this.Config.LivesTextOffsetX; //38
+				int offsetY = this.Config.LivesTextOffsetY; //26
+
+				int posX = offsetX < 0 ?
+					Main.screenWidth + offsetX :
+					offsetX;
+				int posY = offsetY < 0 ?
+					Main.screenHeight + offsetY :
+					offsetY;
+				Vector2 pos = new Vector2( posX, posY );
+
+				sb.DrawString( Main.fontMouseText, " x" + lives, pos, Color.White );
+			}
 		}
 	}
 }

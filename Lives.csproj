@@ -36,7 +36,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Helpers\HamstarHelpers\bin\Release\HamstarHelpers.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\..\References\Libraries\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -48,12 +50,11 @@
     <Reference Include="Microsoft.Xna.Framework" />
     <Reference Include="Microsoft.Xna.Framework.Game" />
     <Reference Include="Microsoft.Xna.Framework.Graphics" />
-    <Reference Include="Terraria.Libraries.ReLogic.ReLogic, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Reference\Terraria.Libraries.ReLogic.ReLogic.dll</HintPath>
+    <Reference Include="Terraria">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Terraria\Terraria.exe</HintPath>
     </Reference>
-    <Reference Include="tModLoaderServerDebug">
-      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Terraria\tModLoaderServerDebug.exe</HintPath>
+    <Reference Include="Terraria.Libraries.ReLogic.ReLogic">
+      <HintPath>..\..\..\References\Libraries\Terraria.Libraries.ReLogic.ReLogic.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
