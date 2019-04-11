@@ -16,8 +16,9 @@ namespace Lives {
 		public byte OriginalDifficulty { get; private set; }
 		public bool IsImmortal { get; private set; }
 
+		private bool IsLoaded = false;
 		
-		////////////////
+		////
 
 		public override bool CloneNewInstances => false;
 
@@ -80,6 +81,8 @@ namespace Lives {
 		public override void Load( TagCompound tags ) {
 			try {
 				if( tags.ContainsKey("lives") ) {
+					this.IsLoaded = true;
+
 					this.IsImmortal = tags.GetBool( "is_immortal" );
 					this.Lives = tags.GetInt( "lives" );
 					this.Deaths = tags.GetInt( "lives_lost" );

@@ -23,6 +23,11 @@ namespace Lives {
 		////////////////
 
 		internal void FinishLocalModSettingsSync() {
+			if( !this.IsLoaded ) {
+				this.IsLoaded = true;
+				this.ResetLivesToDefault();
+			}
+
 			this.UpdateMortality();
 		}
 	}
