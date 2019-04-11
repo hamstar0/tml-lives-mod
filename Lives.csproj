@@ -62,6 +62,7 @@
     <Compile Include="API.cs" />
     <Compile Include="ConfigDefaults.cs" />
     <Compile Include="Items\ExtraLifeItem.cs" />
+    <Compile Include="LivesMod_Interface.cs" />
     <Compile Include="LivesMod_Meta.cs" />
     <Compile Include="LivesMod.cs" />
     <Compile Include="LivesPlayer_Mortality.cs" />
