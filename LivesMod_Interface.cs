@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 
@@ -27,12 +28,12 @@ namespace Lives {
 				}
 			}
 			
-			if( this.Config.DrawContinuesIcon || this.Config.DrawContinuesText ) {
+			if( this.Config.ContinuesLimit > 0 && (this.Config.DrawContinuesIcon || this.Config.DrawContinuesText) ) {
 				if( this.Config.DrawContinuesIcon ) {
 					this.DrawContinuesIcon( sb );
 				}
 				if( this.Config.DrawContinuesText ) {
-					this.DrawContinuesText( sb, myplayer.Continues );
+					this.DrawContinuesText( sb, this.Config.ContinuesLimit - myplayer.ContinuesUsed );
 				}
 			}
 		}
@@ -81,8 +82,8 @@ namespace Lives {
 			int posY = offsetY < 0 ?
 				Main.screenHeight + offsetY :
 				offsetY;
-
-			PlayerHeadDisplayHelpers.DrawPlayerHead( sb, Main.LocalPlayer, posX, posY, 1f, 1f );
+			
+			sb.Draw( Main.itemTexture[ItemID.AnkhCharm], new Vector2(posX, posY), Color.White );
 		}
 
 		public void DrawContinuesText( SpriteBatch sb, int continues ) {

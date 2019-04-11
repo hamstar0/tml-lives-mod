@@ -10,7 +10,10 @@ using Terraria.ModLoader.IO;
 namespace Lives {
 	partial class LivesPlayer : ModPlayer {
 		public int Lives { get; private set; }
+
 		public int Deaths { get; private set; }
+		public int ContinuesUsed { get; private set; }
+
 		public byte OriginalDifficulty { get; private set; }
 		public bool IsImmortal { get; private set; }
 

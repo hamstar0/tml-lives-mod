@@ -13,7 +13,7 @@ namespace Lives {
 			LivesConfigData config = mymod.Config;
 
 			if( config.ContinuesLimit > 0 ) {
-				if( this.Continues >= config.ContinuesLimit ) {
+				if( this.ContinuesUsed >= config.ContinuesLimit ) {
 					return false;
 				}
 			} else {
@@ -36,7 +36,7 @@ namespace Lives {
 			var mymod = (LivesMod)this.mod;
 			LivesConfigData config = mymod.Config;
 
-			this.Continues--;
+			this.ContinuesUsed++;
 
 			if( config.ContinueDeathDropItems ) {
 				this.ApplyContinueInventoryDrop();
@@ -85,14 +85,20 @@ namespace Lives {
 			Mod staminaMod = ModLoader.GetMod( "Stamina" );
 			if( staminaMod == null ) { return; }
 
-			staminaMod.Call();d
+			var mymod = (LivesMod)this.mod;
+			LivesConfigData config = mymod.Config;
+
+			staminaMod.Call( "AddMaxStamina", this.player, -config.ContinueDeathMaxStaminaToll );
 		}
 
 		public void ApplyContinueDeathRewardsPPToll() {
 			Mod staminaMod = ModLoader.GetMod( "Rewards" );
 			if( staminaMod == null ) { return; }
 
-			staminaMod.Call(); d
+			var mymod = (LivesMod)this.mod;
+			LivesConfigData config = mymod.Config;
+
+			staminaMod.Call( "AddPoints", this.player, -config.ContinueDeathRewardsPPToll );
 		}
 	}
 }

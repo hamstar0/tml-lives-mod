@@ -2,6 +2,7 @@
 using HamstarHelpers.Components.Errors;
 using HamstarHelpers.Helpers.TmlHelpers;
 using HamstarHelpers.Helpers.TmlHelpers.ModHelpers;
+using HamstarHelpers.Services.Messages;
 using Lives.NetProtocol;
 using System;
 using System.IO;
@@ -36,16 +37,28 @@ namespace Lives {
 
 			this.LoadConfigs();
 		}
-		
-		private void LoadConfigs() {
+
+		public override void PostSetupContent() {
+			InboxMessages.SetMessage( "LivesFeaturingContinues", "As of v2.0.0, Lives mod now features continues. These will need to be enabled and configured in order to be used.", false );
+		}
+
+		public override void Unload() {
+			LivesMod.Instance = null;
+		}
+
+		////
+
+		private bool LoadConfigs() {
+			bool hasUpdated = false;
 			var oldConfig = new JsonConfig<LivesConfigData>( "Lives 1.2.0.json", "", new LivesConfigData() );
+
 			// Update old config to new location
 			if( oldConfig.LoadFile() ) {
 				oldConfig.DestroyFile();
 				oldConfig.SetFilePath( this.ConfigJson.FileName, ConfigurationDataBase.RelativePath );
 				this.ConfigJson = oldConfig;
 			}
-			
+
 			if( !this.ConfigJson.LoadFile() ) {
 				this.ConfigJson.SaveFile();
 			}
@@ -53,11 +66,11 @@ namespace Lives {
 			if( this.ConfigJson.Data.UpdateToLatestVersion() ) {
 				ErrorLogger.Log( "Lives config updated to " + this.Version.ToString() );
 				this.ConfigJson.SaveFile();
-			}
-		}
 
-		public override void Unload() {
-			LivesMod.Instance = null;
+				hasUpdated = true;
+			}
+
+			return hasUpdated;
 		}
 
 
