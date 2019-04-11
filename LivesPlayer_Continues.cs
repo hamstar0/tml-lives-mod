@@ -1,7 +1,8 @@
-﻿using HamstarHelpers.Helpers.PlayerHelpers;
-using HamstarHelpers.Services.Timers;
+﻿using HamstarHelpers.Services.Timers;
 using Lives.NetProtocol;
+using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -21,11 +22,10 @@ namespace Lives {
 			}
 
 			if( config.ContinueDeathMaxHpToll > 0 ) {
-				int maxHpMin = config.ContinueDeathMaxHpMinimum;
 				int maxHp = this.player.statLifeMax;
 
-				if( maxHpMin <= 0 ) {
-					return maxHp > maxHpMin;
+				if( config.ContinueDeathMaxHpMinimum <= 0 ) {
+					return (maxHp - config.ContinueDeathMaxHpToll) > 0;
 				}
 			}
 
@@ -51,6 +51,13 @@ namespace Lives {
 			if( config.ContinueDeathRewardsPPToll > 0 ) {
 				this.ApplyContinueDeathRewardsPPToll();
 			}
+			
+			Main.NewText( "No lives left. Continuing...", Color.Red );
+
+			foreach( string penalty in this.FormatContinuePenalties() ) {
+				Main.NewText( "  "+penalty, Color.Yellow );
+			}
+			Main.NewText( " " );
 		}
 
 
@@ -76,9 +83,9 @@ namespace Lives {
 			var mymod = (LivesMod)this.mod;
 			LivesConfigData config = mymod.Config;
 
-			int newMaxHp = this.player.statMana - config.ContinueDeathMaxHpToll;
-
-			this.player.statLifeMax = Math.Max( newMaxHp, Math.Max( 1, config.ContinueDeathMaxHpMinimum ) );
+			int newMaxHp = this.player.statLifeMax - config.ContinueDeathMaxHpToll;
+			
+			this.player.statLifeMax = Math.Max( newMaxHp, Math.Max( 20, config.ContinueDeathMaxHpMinimum ) );
 		}
 
 		public void ApplyContinueDeathMaxStaminaToll() {
@@ -92,13 +99,66 @@ namespace Lives {
 		}
 
 		public void ApplyContinueDeathRewardsPPToll() {
-			Mod staminaMod = ModLoader.GetMod( "Rewards" );
-			if( staminaMod == null ) { return; }
+			Mod rewardsMod = ModLoader.GetMod( "Rewards" );
+			if( rewardsMod == null ) { return; }
 
 			var mymod = (LivesMod)this.mod;
 			LivesConfigData config = mymod.Config;
 
-			staminaMod.Call( "AddPoints", this.player, -config.ContinueDeathRewardsPPToll );
+			float pp = (float)rewardsMod.Call( "GetPoints", this.player );
+			if( pp <= config.ContinueDeathRewardsPPMinimum ) {
+				return;
+			}
+
+			rewardsMod.Call( "AddPoints", this.player, (float)-config.ContinueDeathRewardsPPToll );
+		}
+
+
+		////////////////
+
+		public IEnumerable<string> FormatContinuePenalties() {
+			var mymod = (LivesMod)this.mod;
+			LivesConfigData config = mymod.Config;
+			var penalties = new List<string>();
+
+			if( config.ContinuesLimit == 0 ) {
+				penalties.Add( "Game over!" );
+			} else {
+				if( config.ContinuesLimit > 0 ) {
+					int continues = config.ContinuesLimit - this.ContinuesUsed;
+					penalties.Add( "Lost 1 continue ("+continues+" remain)" );
+				}
+
+				if( config.ContinueDeathDropItems ) {
+					penalties.Add( "Items dropped." );
+				}
+
+				if( config.ContinueDeathMaxHpToll > 0 ) {
+					if( config.ContinueDeathMaxHpMinimum <= 0 ) {
+						penalties.Add( "Lost " + config.ContinueDeathMaxHpToll + " max health (game over if empty)." );
+					} else {
+						penalties.Add( "Lost " + config.ContinueDeathMaxHpToll + " max health (min " + config.ContinueDeathMaxHpMinimum+")." );
+					}
+				}
+
+				if( config.ContinueDeathMaxStaminaToll > 0 ) {
+					if( config.ContinueDeathMaxStaminaMinimum <= 0 ) {
+						penalties.Add( "Lost " + config.ContinueDeathMaxStaminaToll + " max stamina." );
+					} else {
+						penalties.Add( "Lost " + config.ContinueDeathMaxStaminaToll + " max stamina (min " + config.ContinueDeathMaxStaminaMinimum + ")." );
+					}
+				}
+
+				if( config.ContinueDeathRewardsPPToll > 0 ) {
+					if( config.ContinueDeathRewardsPPMinimum <= 0 ) {
+						penalties.Add( "Lost " + config.ContinueDeathRewardsPPToll + " PP." );
+					} else {
+						penalties.Add( "Lost " + config.ContinueDeathRewardsPPToll + " PP (min " + config.ContinueDeathRewardsPPMinimum + ")." );
+					}
+				}
+			}
+
+			return penalties;
 		}
 	}
 }

@@ -1,4 +1,7 @@
-﻿using Terraria.ModLoader;
+﻿using HamstarHelpers.Helpers.DebugHelpers;
+using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.ModLoader;
 
 
 namespace Lives {
@@ -29,14 +32,19 @@ namespace Lives {
 				if( !this.IsImmortal ) {
 					if( this.Lives <= 0 ) {
 						if( this.IsContinue() ) {
+//DebugHelpers.Print("LivesContinues", "", 20);
+							this.Lives = mymod.Config.InitialLives;
 							this.ApplyContinue();
 						} else {
+//DebugHelpers.Print("LivesFinal", "", 20);
+							Main.NewText( "No lives left. Game over!", Color.Red );
 							this.ApplyDeathFinal();
 						}
 					}
 				}
 			} else {
 				if( this.Lives > 0 ) {
+//DebugHelpers.Print("LivesNonFinal", "", 20);
 					this.ApplyDeathNonFinal();
 				}
 			}

@@ -28,8 +28,9 @@ namespace Lives {
 		public int ContinuesLimit = 0;	// Less than 0: Unlimited, Greater than 0: Finite, Equal to 0: Game over!
 		public bool ContinueDeathDropItems = true;
 		public int ContinueDeathMaxHpToll = 100;
-		public int ContinueDeathMaxHpMinimum = 0;	// No max hp? Game over!
-		public int ContinueDeathRewardsPPToll = 25;
+		public int ContinueDeathMaxHpMinimum = 100;	// No max hp? Game over!
+		public int ContinueDeathRewardsPPToll = 10;
+		public int ContinueDeathRewardsPPMinimum = 0;
 		public int ContinueDeathMaxStaminaToll = 10;
 		public int ContinueDeathMaxStaminaMinimum = 50;
 
@@ -43,13 +44,13 @@ namespace Lives {
 		public int DrawLivesTextOffsetX = -38;
 		public int DrawLivesTextOffsetY = -26;
 
-		public bool DrawContinuesIcon = false;
-		public bool DrawContinuesText = false;
+		public bool DrawContinuesIcon = true;
+		public bool DrawContinuesText = true;
 
-		public int DrawContinuesIconOffsetX = -40;
-		public int DrawContinuesIconOffsetY = -60;
+		public int DrawContinuesIconOffsetX = -56;
+		public int DrawContinuesIconOffsetY = -68;
 		public int DrawContinuesTextOffsetX = -38;
-		public int DrawContinuesTextOffsetY = -67;
+		public int DrawContinuesTextOffsetY = -59;
 
 
 		

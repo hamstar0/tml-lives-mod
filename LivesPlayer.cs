@@ -96,6 +96,9 @@ namespace Lives {
 					this.Deaths = tags.GetInt( "lives_lost" );
 					this.OriginalDifficulty = tags.GetByte( "difficulty" );
 				}
+				if( tags.ContainsKey("continues") ) {
+					this.ContinuesUsed = tags.GetInt( "continues" );
+				}
 				
 				this.UpdateMortality();
 			} catch( Exception e ) {
@@ -108,7 +111,8 @@ namespace Lives {
 				{"is_immortal", this.IsImmortal},
 				{"lives", this.Lives},
 				{"lives_lost", this.Deaths},
-				{"difficulty", this.OriginalDifficulty}
+				{"difficulty", this.OriginalDifficulty},
+				{"continues", this.ContinuesUsed}
 			};
 			return tags;
 		}
