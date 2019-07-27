@@ -1,4 +1,4 @@
-﻿using HamstarHelpers.Helpers.DebugHelpers;
+﻿using HamstarHelpers.Helpers.Debug;
 using System;
 using Terraria;
 using Terraria.DataStructures;
@@ -61,13 +61,6 @@ namespace Lives {
 			var mymod = (LivesMod)this.mod;
 
 			if( Main.netMode == 0 ) {
-				if( !mymod.ConfigJson.LoadFile() ) {
-					mymod.ConfigJson.SaveFile();
-					LogHelpers.Alert( "Lives config " + mymod.Version.ToString() + " created." );
-				}
-			}
-
-			if( Main.netMode == 0 ) {
 				this.OnSingleConnect();
 			}
 			if( Main.netMode == 1 ) {
@@ -94,7 +87,7 @@ namespace Lives {
 				
 				this.UpdateMortality();
 			} catch( Exception e ) {
-				ErrorLogger.Log( e.ToString() );
+				LogHelpers.Log( e.ToString() );
 			}
 		}
 
@@ -114,7 +107,7 @@ namespace Lives {
 
 		public override bool PreKill( double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource ) {
 			var mymod = (LivesMod)this.mod;
-			if( !mymod.ConfigJson.Data.Enabled ) {
+			if( !mymod.Config.Enabled ) {
 				base.PreKill( damage, hitDirection, pvp, ref playSound, ref genGore, ref damageSource );
 			}
 
@@ -129,7 +122,7 @@ namespace Lives {
 		public void ResetLivesToDefault() {
 			var mymod = (LivesMod)this.mod;
 
-			this.Lives = mymod.ConfigJson.Data.InitialLives;
+			this.Lives = mymod.Config.InitialLives;
 			this.Deaths = 0;
 			this.IsImmortal = false;
 		}

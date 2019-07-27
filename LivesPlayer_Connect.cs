@@ -1,6 +1,4 @@
-﻿using HamstarHelpers.Components.Network;
-using HamstarHelpers.Helpers.DebugHelpers;
-using Lives.NetProtocols;
+﻿using HamstarHelpers.Helpers.Debug;
 using System;
 using Terraria.ModLoader;
 
@@ -12,7 +10,6 @@ namespace Lives {
 		}
 
 		private void OnCurrentClientConnect() {
-			PacketProtocolRequestToServer.QuickRequest<ModSettingsProtocol>( -1 );
 		}
 
 		private void OnServerConnect() {

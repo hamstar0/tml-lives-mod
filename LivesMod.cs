@@ -1,10 +1,7 @@
-﻿using HamstarHelpers.Components.Config;
-using HamstarHelpers.Components.Errors;
-using HamstarHelpers.Helpers.TmlHelpers;
-using HamstarHelpers.Helpers.TmlHelpers.ModHelpers;
-using HamstarHelpers.Services.Messages;
-using System;
+﻿using System;
 using Terraria.ModLoader;
+using HamstarHelpers.Services.Messages.Inbox;
+using HamstarHelpers.Helpers.TModLoader.Mods;
 
 
 namespace Lives {
@@ -15,24 +12,17 @@ namespace Lives {
 
 		////////////////
 
-		public JsonConfig<LivesConfigData> ConfigJson { get; private set; }
-		public LivesConfigData Config => this.ConfigJson.Data;
+		public LivesConfig Config => this.GetConfig<LivesConfig>();
 
 
 
 		////////////////
 
 		public LivesMod() {
-			this.ConfigJson = new JsonConfig<LivesConfigData>( LivesConfigData.ConfigFileName, ConfigurationDataBase.RelativePath, new LivesConfigData() );
+			LivesMod.Instance = this;
 		}
 
 		public override void Load() {
-			string depErr = TmlHelpers.ReportBadDependencyMods( this );
-			if( depErr != null ) { throw new HamstarException( depErr ); }
-
-			LivesMod.Instance = this;
-
-			this.LoadConfigs();
 		}
 
 		public override void PostSetupContent() {
@@ -44,33 +34,6 @@ namespace Lives {
 
 		public override void Unload() {
 			LivesMod.Instance = null;
-		}
-
-		////
-
-		private bool LoadConfigs() {
-			bool hasUpdated = false;
-			var oldConfig = new JsonConfig<LivesConfigData>( "Lives 1.2.0.json", "", new LivesConfigData() );
-
-			// Update old config to new location
-			if( oldConfig.LoadFile() ) {
-				oldConfig.DestroyFile();
-				oldConfig.SetFilePath( this.ConfigJson.FileName, ConfigurationDataBase.RelativePath );
-				this.ConfigJson = oldConfig;
-			}
-
-			if( !this.ConfigJson.LoadFile() ) {
-				this.ConfigJson.SaveFile();
-			}
-
-			if( this.ConfigJson.Data.UpdateToLatestVersion() ) {
-				ErrorLogger.Log( "Lives config updated to " + this.Version.ToString() );
-				this.ConfigJson.SaveFile();
-
-				hasUpdated = true;
-			}
-
-			return hasUpdated;
 		}
 
 

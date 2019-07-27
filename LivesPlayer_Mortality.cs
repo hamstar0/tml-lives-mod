@@ -1,4 +1,4 @@
-﻿using HamstarHelpers.Helpers.DebugHelpers;
+﻿using HamstarHelpers.Helpers.Debug;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
@@ -24,8 +24,8 @@ namespace Lives {
 		public void UpdateMortality() {
 			var mymod = (LivesMod)this.mod;
 
-			if( this.Lives > mymod.ConfigJson.Data.MaxLives ) {
-				this.Lives = mymod.ConfigJson.Data.MaxLives;
+			if( this.Lives > mymod.Config.MaxLives ) {
+				this.Lives = mymod.Config.MaxLives;
 			}
 			
 //Main.NewText("difficulty: "+this.player.difficulty+", immortal? "+this.IsImmortal+", lives: "+this.Lives+", continues? "+this.IsContinue());

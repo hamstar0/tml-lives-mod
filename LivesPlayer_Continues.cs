@@ -11,7 +11,7 @@ namespace Lives {
 	partial class LivesPlayer : ModPlayer {
 		public bool IsContinue() {
 			var mymod = (LivesMod)this.mod;
-			LivesConfigData config = mymod.Config;
+			LivesConfig config = mymod.Config;
 
 			if( config.ContinuesLimit > 0 ) {
 				if( this.ContinuesUsed >= config.ContinuesLimit ) {
@@ -34,7 +34,7 @@ namespace Lives {
 
 		public void ApplyContinue() {
 			var mymod = (LivesMod)this.mod;
-			LivesConfigData config = mymod.Config;
+			LivesConfig config = mymod.Config;
 
 			this.ContinuesUsed++;
 
@@ -80,7 +80,7 @@ namespace Lives {
 
 		public void ApplyContinueDeathMaxHpToll() {
 			var mymod = (LivesMod)this.mod;
-			LivesConfigData config = mymod.Config;
+			LivesConfig config = mymod.Config;
 
 			int newMaxHp = this.player.statLifeMax - config.ContinueDeathMaxHpToll;
 			
@@ -92,7 +92,7 @@ namespace Lives {
 			if( staminaMod == null ) { return; }
 
 			var mymod = (LivesMod)this.mod;
-			LivesConfigData config = mymod.Config;
+			LivesConfig config = mymod.Config;
 
 			staminaMod.Call( "AddMaxStamina", this.player, -config.ContinueDeathMaxStaminaToll );
 		}
@@ -102,7 +102,7 @@ namespace Lives {
 			if( rewardsMod == null ) { return; }
 
 			var mymod = (LivesMod)this.mod;
-			LivesConfigData config = mymod.Config;
+			LivesConfig config = mymod.Config;
 
 			float pp = (float)rewardsMod.Call( "GetPoints", this.player );
 			if( pp <= config.ContinueDeathRewardsPPMinimum ) {
@@ -117,7 +117,7 @@ namespace Lives {
 
 		public IEnumerable<string> FormatContinuePenalties() {
 			var mymod = (LivesMod)this.mod;
-			LivesConfigData config = mymod.Config;
+			LivesConfig config = mymod.Config;
 			var penalties = new List<string>();
 
 			if( config.ContinuesLimit == 0 ) {

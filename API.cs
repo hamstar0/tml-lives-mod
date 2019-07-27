@@ -4,11 +4,6 @@ using Terraria;
 
 namespace Lives {
 	public static partial class LivesAPI {
-		public static LivesConfigData GetModSettings() {
-			return LivesMod.Instance.ConfigJson.Data;
-		}
-
-
 		public static bool AddLives( Player player, int lives ) {
 			var myplayer = player.GetModPlayer<LivesPlayer>();
 			return myplayer.AddLives( lives );

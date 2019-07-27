@@ -1,6 +1,6 @@
 ﻿using HamstarHelpers.Components.Errors;
-using HamstarHelpers.Helpers.PlayerHelpers;
-using HamstarHelpers.Helpers.TmlHelpers;
+using HamstarHelpers.Helpers.Players;
+using HamstarHelpers.Helpers.TModLoader;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
@@ -52,7 +52,7 @@ namespace Lives {
 				Main.screenHeight + offsetY :
 				offsetY;
 
-			PlayerHeadDisplayHelpers.DrawPlayerHead( sb, Main.LocalPlayer, posX, posY, 1f, 1f );
+			PlayerHeadDrawHelpers.DrawPlayerHead( sb, Main.LocalPlayer, posX, posY, 1f, 1f );
 		}
 
 		public void DrawLivesText( SpriteBatch sb, int lives ) {

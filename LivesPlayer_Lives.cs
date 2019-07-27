@@ -1,5 +1,4 @@
-﻿using HamstarHelpers.Components.Network;
-using Lives.NetProtocols;
+﻿using Lives.NetProtocols;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -9,8 +8,8 @@ namespace Lives {
 		public bool AddLives( int lives ) {
 			var mymod = (LivesMod)this.mod;
 
-			if( ( this.Lives + lives ) > mymod.ConfigJson.Data.MaxLives ) {
-				lives = mymod.ConfigJson.Data.MaxLives - this.Lives;
+			if( ( this.Lives + lives ) > mymod.Config.MaxLives ) {
+				lives = mymod.Config.MaxLives - this.Lives;
 			} else if( ( this.Lives + lives ) < 0 ) {
 				lives = -this.Lives;
 			}

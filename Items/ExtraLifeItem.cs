@@ -60,11 +60,11 @@ namespace Lives.Items {
 
 	class ExtraLifeRecipe : ModRecipe {
 		public ExtraLifeRecipe( LivesMod mymod, ExtraLifeItem myitem, int itemId, int baseQuantity ) : base( mymod ) {
-			int coins = mymod.ConfigJson.Data.ExtraLifeGoldCoins;
+			int coins = mymod.Config.ExtraLifeGoldCoins;
 
 			this.AddIngredient( itemId, baseQuantity );
 
-			if( mymod.ConfigJson.Data.ExtraLifeVoodoo ) {
+			if( mymod.Config.ExtraLifeVoodoo ) {
 				this.AddIngredient( ItemID.GuideVoodooDoll, 1 );
 			}
 			if( coins > 0 ) {
@@ -75,7 +75,7 @@ namespace Lives.Items {
 
 		public override bool RecipeAvailable() {
 			var mymod = (LivesMod)this.mod;
-			return mymod.ConfigJson.Data.Enabled && mymod.ConfigJson.Data.CraftableExtraLives;
+			return mymod.Config.Enabled && mymod.Config.CraftableExtraLives;
 		}
 	}
 }
