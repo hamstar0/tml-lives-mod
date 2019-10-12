@@ -16,9 +16,11 @@ namespace Lives {
 
 		////
 
+		[Range( 1, 999 )]
 		[DefaultValue( 3 )]
 		public int InitialLives = 3;
 
+		[Range( 1, 999 )]
 		[DefaultValue( 99 )]
 		public int MaxLives = 99;
 
@@ -26,6 +28,7 @@ namespace Lives {
 		[DefaultValue( true )]
 		public bool CraftableExtraLives = true;
 
+		[Range( 0, 999 )]
 		[DefaultValue( 15 )]
 		public int ExtraLifeGoldCoins = 15;
 
@@ -35,6 +38,7 @@ namespace Lives {
 
 		////
 
+		[Range( -1, 999 )]
 		[DefaultValue( 0 )]
 		public int ContinuesLimit = 0;  // Less than 0: Unlimited, Greater than 0: Finite, Equal to 0: Game over!
 
@@ -69,15 +73,19 @@ namespace Lives {
 		public bool DrawLivesText = true;
 
 
+		[Range( -2048, 2048 )]
 		[DefaultValue( -48 )]
 		public int DrawLivesIconOffsetX = -48;
 
+		[Range( -1024, 1024 )]
 		[DefaultValue( -24 )]
 		public int DrawLivesIconOffsetY = -24;
 
+		[Range( -2048, 2048 )]
 		[DefaultValue( -38 )]
 		public int DrawLivesTextOffsetX = -38;
 
+		[Range( -1024, 1024 )]
 		[DefaultValue( -26 )]
 		public int DrawLivesTextOffsetY = -26;
 
@@ -89,15 +97,19 @@ namespace Lives {
 		public bool DrawContinuesText = true;
 
 
+		[Range( -2048, 2048 )]
 		[DefaultValue( -56 )]
 		public int DrawContinuesIconOffsetX = -56;
 
+		[Range( -1024, 1024 )]
 		[DefaultValue( -68 )]
 		public int DrawContinuesIconOffsetY = -68;
 
+		[Range( -2048, 2048 )]
 		[DefaultValue( -38 )]
 		public int DrawContinuesTextOffsetX = -38;
 
+		[Range( -1024, 1024 )]
 		[DefaultValue( -59 )]
 		public int DrawContinuesTextOffsetY = -59;
 	}

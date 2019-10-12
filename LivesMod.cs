@@ -12,7 +12,7 @@ namespace Lives {
 
 		////////////////
 
-		public LivesConfig Config => this.GetConfig<LivesConfig>();
+		public LivesConfig Config => ModContent.GetInstance<LivesConfig>();
 
 
 

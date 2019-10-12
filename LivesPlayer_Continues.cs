@@ -32,9 +32,12 @@ namespace Lives {
 			return true;
 		}
 
-		public void ApplyContinue() {
+		public bool ApplyContinue( out string gameOverReason ) {
 			var mymod = (LivesMod)this.mod;
 			LivesConfig config = mymod.Config;
+			gameOverReason = "";
+
+			bool isGameOver = false;
 
 			this.ContinuesUsed++;
 
@@ -43,7 +46,7 @@ namespace Lives {
 			}
 
 			if( config.ContinueDeathMaxHpToll > 0 ) {
-				this.ApplyContinueDeathMaxHpToll();
+				isGameOver = this.ApplyContinueDeathMaxHpToll( out gameOverReason ) || isGameOver;
 			}
 			if( config.ContinueDeathMaxStaminaToll > 0 ) {
 				this.ApplyContinueDeathMaxStaminaToll();
@@ -51,12 +54,16 @@ namespace Lives {
 			if( config.ContinueDeathRewardsPPToll > 0 ) {
 				this.ApplyContinueDeathRewardsPPToll();
 			}
-			
-			Main.NewText( "No lives left. Continuing...", Color.Red );
 
-			foreach( string penalty in this.FormatContinuePenalties() ) {
-				Main.NewText( "  "+penalty, Color.Yellow );
+			if( !isGameOver ) {
+				Main.NewText( "No lives left. Continuing...", Color.Red );
+
+				foreach( string penalty in this.FormatContinuePenalties() ) {
+					Main.NewText( "  " + penalty, Color.Yellow );
+				}
 			}
+
+			return isGameOver;
 		}
 
 
@@ -78,13 +85,22 @@ namespace Lives {
 			} );
 		}
 
-		public void ApplyContinueDeathMaxHpToll() {
+		public bool ApplyContinueDeathMaxHpToll( out string gameOverReason ) {
 			var mymod = (LivesMod)this.mod;
 			LivesConfig config = mymod.Config;
 
 			int newMaxHp = this.player.statLifeMax - config.ContinueDeathMaxHpToll;
+			bool isGameOver = newMaxHp <= 0;
 			
 			this.player.statLifeMax = Math.Max( newMaxHp, Math.Max( 20, config.ContinueDeathMaxHpMinimum ) );
+
+			if( isGameOver ) {
+				gameOverReason = "Ran out of life.";
+			} else {
+				gameOverReason = "";
+			}
+
+			return isGameOver;
 		}
 
 		public void ApplyContinueDeathMaxStaminaToll() {

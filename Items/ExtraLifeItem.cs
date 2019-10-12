@@ -42,7 +42,7 @@ namespace Lives.Items {
 		}
 
 		public override bool ConsumeItem( Player player ) {
-			LivesPlayer modplayer = player.GetModPlayer<LivesPlayer>(this.mod);
+			LivesPlayer modplayer = ModContent.GetInstance<LivesPlayer>();
 			return modplayer.AddLives( 1 );
 		}
 

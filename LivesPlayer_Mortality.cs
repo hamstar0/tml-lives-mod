@@ -35,7 +35,12 @@ namespace Lives {
 						if( this.IsContinue() ) {
 //DebugHelpers.Print("LivesContinues", "", 20);
 							this.Lives = mymod.Config.InitialLives;
-							this.ApplyContinue();
+
+							string gameOverReason;
+							if( !this.ApplyContinue( out gameOverReason ) ) {
+								Main.NewText( gameOverReason+" Game over!", Color.Red );
+								this.ApplyDeathFinal();
+							}
 						} else {
 //DebugHelpers.Print("LivesFinal", "", 20);
 							Main.NewText( "No lives left. Game over!", Color.Red );
