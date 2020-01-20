@@ -106,8 +106,7 @@ namespace Lives {
 		////////////////
 
 		public override bool PreKill( double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource ) {
-			var mymod = (LivesMod)this.mod;
-			if( !mymod.Config.Enabled ) {
+			if( !LivesConfig.Instance.Enabled ) {
 				base.PreKill( damage, hitDirection, pvp, ref playSound, ref genGore, ref damageSource );
 			}
 
@@ -122,7 +121,7 @@ namespace Lives {
 		public void ResetLivesToDefault() {
 			var mymod = (LivesMod)this.mod;
 
-			this.Lives = mymod.Config.InitialLives;
+			this.Lives = LivesConfig.Instance.InitialLives;
 			this.Deaths = 0;
 			this.IsImmortal = false;
 		}

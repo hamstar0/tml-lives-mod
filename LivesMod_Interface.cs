@@ -12,28 +12,29 @@ using Terraria.ModLoader;
 namespace Lives {
 	partial class LivesMod : Mod {
 		public override void PostDrawInterface( SpriteBatch sb ) {
-			if( !this.Config.Enabled ) { return; }
+			var config = LivesConfig.Instance;
+			if( !config.Enabled ) { return; }
 
 			Player player = Main.LocalPlayer;
 			if( player.difficulty == 2 ) { return; }
 
 			var myplayer = TmlHelpers.SafelyGetModPlayer<LivesPlayer>( player );
 
-			if( this.Config.DrawLivesIcon || this.Config.DrawLivesText ) {
-				if( this.Config.DrawLivesIcon ) {
+			if( config.DrawLivesIcon || config.DrawLivesText ) {
+				if( config.DrawLivesIcon ) {
 					this.DrawLivesIcon( sb );
 				}
-				if( this.Config.DrawLivesText ) {
+				if( config.DrawLivesText ) {
 					this.DrawLivesText( sb, myplayer.Lives );
 				}
 			}
 			
-			if( this.Config.ContinuesLimit > 0 && (this.Config.DrawContinuesIcon || this.Config.DrawContinuesText) ) {
-				if( this.Config.DrawContinuesIcon ) {
+			if( config.ContinuesLimit > 0 && ( config.DrawContinuesIcon || config.DrawContinuesText) ) {
+				if( config.DrawContinuesIcon ) {
 					this.DrawContinuesIcon( sb );
 				}
-				if( this.Config.DrawContinuesText ) {
-					this.DrawContinuesText( sb, this.Config.ContinuesLimit - myplayer.ContinuesUsed );
+				if( config.DrawContinuesText ) {
+					this.DrawContinuesText( sb, config.ContinuesLimit - myplayer.ContinuesUsed );
 				}
 			}
 		}
@@ -42,8 +43,9 @@ namespace Lives {
 		////////////////
 
 		public void DrawLivesIcon( SpriteBatch sb ) {
-			int offsetX = this.Config.DrawLivesIconOffsetX; //48
-			int offsetY = this.Config.DrawLivesIconOffsetY; //24
+			var config = LivesConfig.Instance;
+			int offsetX = config.DrawLivesIconOffsetX; //48
+			int offsetY = config.DrawLivesIconOffsetY; //24
 
 			int posX = offsetX < 0 ?
 				Main.screenWidth + offsetX :
@@ -56,8 +58,9 @@ namespace Lives {
 		}
 
 		public void DrawLivesText( SpriteBatch sb, int lives ) {
-			int offsetX = this.Config.DrawLivesTextOffsetX; //38
-			int offsetY = this.Config.DrawLivesTextOffsetY; //26
+			var config = LivesConfig.Instance;
+			int offsetX = config.DrawLivesTextOffsetX; //38
+			int offsetY = config.DrawLivesTextOffsetY; //26
 
 			int posX = offsetX < 0 ?
 				Main.screenWidth + offsetX :
@@ -73,8 +76,9 @@ namespace Lives {
 		////
 
 		public void DrawContinuesIcon( SpriteBatch sb ) {
-			int offsetX = this.Config.DrawContinuesIconOffsetX;
-			int offsetY = this.Config.DrawContinuesIconOffsetY;
+			var config = LivesConfig.Instance;
+			int offsetX = config.DrawContinuesIconOffsetX;
+			int offsetY = config.DrawContinuesIconOffsetY;
 
 			int posX = offsetX < 0 ?
 				Main.screenWidth + offsetX :
@@ -87,8 +91,9 @@ namespace Lives {
 		}
 
 		public void DrawContinuesText( SpriteBatch sb, int continues ) {
-			int offsetX = this.Config.DrawContinuesTextOffsetX;
-			int offsetY = this.Config.DrawContinuesTextOffsetY;
+			var config = LivesConfig.Instance;
+			int offsetX = config.DrawContinuesTextOffsetX;
+			int offsetY = config.DrawContinuesTextOffsetY;
 
 			int posX = offsetX < 0 ?
 				Main.screenWidth + offsetX :

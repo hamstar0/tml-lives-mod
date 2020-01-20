@@ -47,9 +47,8 @@ namespace Lives.Items {
 		}
 
 		public override void AddRecipes() {
-			var mymod = (LivesMod)this.mod;
-			var recipe1 = new ExtraLifeRecipe( mymod, this, ItemID.LifeCrystal, 1 );
-			var recipe2 = new ExtraLifeRecipe( mymod, this, ItemID.LifeFruit, 4 );
+			var recipe1 = new ExtraLifeRecipe( this, ItemID.LifeCrystal, 1 );
+			var recipe2 = new ExtraLifeRecipe( this, ItemID.LifeFruit, 4 );
 
 			recipe1.AddRecipe();
 			recipe2.AddRecipe();
@@ -58,13 +57,15 @@ namespace Lives.Items {
 
 
 
+
 	class ExtraLifeRecipe : ModRecipe {
-		public ExtraLifeRecipe( LivesMod mymod, ExtraLifeItem myitem, int itemId, int baseQuantity ) : base( mymod ) {
-			int coins = mymod.Config.ExtraLifeGoldCoins;
+		public ExtraLifeRecipe( ExtraLifeItem myitem, int itemId, int baseQuantity ) : base( LivesMod.Instance ) {
+			var config = LivesConfig.Instance;
+			int coins = config.ExtraLifeGoldCoins;
 
 			this.AddIngredient( itemId, baseQuantity );
 
-			if( mymod.Config.ExtraLifeVoodoo ) {
+			if( config.ExtraLifeVoodoo ) {
 				this.AddIngredient( ItemID.GuideVoodooDoll, 1 );
 			}
 			if( coins > 0 ) {
@@ -74,8 +75,8 @@ namespace Lives.Items {
 		}
 
 		public override bool RecipeAvailable() {
-			var mymod = (LivesMod)this.mod;
-			return mymod.Config.Enabled && mymod.Config.CraftableExtraLives;
+			var config = LivesConfig.Instance;
+			return config.Enabled && config.CraftableExtraLives;
 		}
 	}
 }

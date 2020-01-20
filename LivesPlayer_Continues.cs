@@ -10,8 +10,7 @@ using Terraria.ModLoader;
 namespace Lives {
 	partial class LivesPlayer : ModPlayer {
 		public bool IsContinue() {
-			var mymod = (LivesMod)this.mod;
-			LivesConfig config = mymod.Config;
+			var config = LivesConfig.Instance;
 
 			if( config.ContinuesLimit > 0 ) {
 				if( this.ContinuesUsed >= config.ContinuesLimit ) {
@@ -33,8 +32,7 @@ namespace Lives {
 		}
 
 		public bool ApplyContinue( out string gameOverReason ) {
-			var mymod = (LivesMod)this.mod;
-			LivesConfig config = mymod.Config;
+			var config = LivesConfig.Instance;
 			gameOverReason = "";
 
 			bool isGameOver = false;
@@ -79,7 +77,7 @@ namespace Lives {
 				DifficultyChangeProtocol.SendToServer( 3 );	//<- Special amount to trigger revert after 1s
 			}
 
-			Timers.SetTimer( "LivesContinueMediumcoreRevert", 60, () => {
+			Timers.SetTimer( "LivesContinueMediumcoreRevert", 60, false, () => {
 				Main.player[who].difficulty = difficulty;
 				return false;
 			} );
@@ -87,7 +85,7 @@ namespace Lives {
 
 		public bool ApplyContinueDeathMaxHpToll( out string gameOverReason ) {
 			var mymod = (LivesMod)this.mod;
-			LivesConfig config = mymod.Config;
+			var config = LivesConfig.Instance;
 
 			int newMaxHp = this.player.statLifeMax - config.ContinueDeathMaxHpToll;
 			bool isGameOver = newMaxHp <= 0;
@@ -107,8 +105,7 @@ namespace Lives {
 			Mod staminaMod = ModLoader.GetMod( "Stamina" );
 			if( staminaMod == null ) { return; }
 
-			var mymod = (LivesMod)this.mod;
-			LivesConfig config = mymod.Config;
+			var config = LivesConfig.Instance;
 
 			staminaMod.Call( "AddMaxStamina", this.player, -config.ContinueDeathMaxStaminaToll );
 		}
@@ -117,8 +114,7 @@ namespace Lives {
 			Mod rewardsMod = ModLoader.GetMod( "Rewards" );
 			if( rewardsMod == null ) { return; }
 
-			var mymod = (LivesMod)this.mod;
-			LivesConfig config = mymod.Config;
+			var config = LivesConfig.Instance;
 
 			float pp = (float)rewardsMod.Call( "GetPoints", this.player );
 			if( pp <= config.ContinueDeathRewardsPPMinimum ) {
@@ -132,8 +128,7 @@ namespace Lives {
 		////////////////
 
 		public IEnumerable<string> FormatContinuePenalties() {
-			var mymod = (LivesMod)this.mod;
-			LivesConfig config = mymod.Config;
+			var config = LivesConfig.Instance;
 			var penalties = new List<string>();
 
 			if( config.ContinuesLimit == 0 ) {

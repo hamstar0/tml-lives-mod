@@ -6,10 +6,10 @@ using Terraria.ModLoader;
 namespace Lives {
 	partial class LivesPlayer : ModPlayer {
 		public bool AddLives( int lives ) {
-			var mymod = (LivesMod)this.mod;
+			var config = LivesConfig.Instance;
 
-			if( ( this.Lives + lives ) > mymod.Config.MaxLives ) {
-				lives = mymod.Config.MaxLives - this.Lives;
+			if( ( this.Lives + lives ) > config.MaxLives ) {
+				lives = config.MaxLives - this.Lives;
 			} else if( ( this.Lives + lives ) < 0 ) {
 				lives = -this.Lives;
 			}

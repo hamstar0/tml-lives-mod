@@ -22,10 +22,10 @@ namespace Lives {
 		////////////////
 
 		public void UpdateMortality() {
-			var mymod = (LivesMod)this.mod;
+			var config = LivesConfig.Instance;
 
-			if( this.Lives > mymod.Config.MaxLives ) {
-				this.Lives = mymod.Config.MaxLives;
+			if( this.Lives > config.MaxLives ) {
+				this.Lives = config.MaxLives;
 			}
 			
 //Main.NewText("difficulty: "+this.player.difficulty+", immortal? "+this.IsImmortal+", lives: "+this.Lives+", continues? "+this.IsContinue());
@@ -34,7 +34,7 @@ namespace Lives {
 					if( this.Lives <= 0 ) {
 						if( this.IsContinue() ) {
 //DebugHelpers.Print("LivesContinues", "", 20);
-							this.Lives = mymod.Config.InitialLives;
+							this.Lives = config.InitialLives;
 
 							string gameOverReason;
 							if( !this.ApplyContinue( out gameOverReason ) ) {

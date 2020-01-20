@@ -12,12 +12,6 @@ namespace Lives {
 
 		////////////////
 
-		public LivesConfig Config => ModContent.GetInstance<LivesConfig>();
-
-
-
-		////////////////
-
 		public LivesMod() {
 			LivesMod.Instance = this;
 		}
@@ -26,7 +20,8 @@ namespace Lives {
 		}
 
 		public override void PostSetupContent() {
-			InboxMessages.SetMessage( "LivesFeaturingContinues",
+			InboxMessages.SetMessage(
+				"LivesFeaturingContinues",
 				"As of v2.0.0, Lives mod now features continues. These need to be enabled by config. Set \"ContinuesLimit\" to -1 for unlimited continues, or > 0 for a finite amount.",
 				false
 			);
